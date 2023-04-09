@@ -138,7 +138,7 @@ class GameScene: SKScene {
 
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
-        ship = screen.display(imageNamed: "ship")
+        ship = screen.display(imageNamed: "ship_0")
         flame = screen.display(imageNamed: "flame_\(flameSprite)")
     }
 
@@ -174,6 +174,8 @@ class GameScene: SKScene {
         let keyCode = KeyCodes(rawValue: event.keyCode)
         if keyCode?.toDirection() == currentDirection {
             currentDirection = .none
+            ship.texture = SKTexture(imageNamed: "ship_0")
+            ship.texture?.filteringMode = .nearest
         }
     }
 
@@ -182,6 +184,15 @@ class GameScene: SKScene {
         let direction = keyCode?.toDirection() ?? Direction.none
         if direction != .none {
             currentDirection = direction
+            switch direction {
+            case .left:
+                ship.texture = SKTexture(imageNamed: "ship_1")
+            case .right:
+                ship.texture = SKTexture(imageNamed: "ship_2")
+            default:
+                ship.texture = SKTexture(imageNamed: "ship_0")
+            }
+            ship.texture?.filteringMode = .nearest
         }
         if keyCode == KeyCodes.zKey && fire == nil {
             fire = screen.display(imageNamed: "fire")
