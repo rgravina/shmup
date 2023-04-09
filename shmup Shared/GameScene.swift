@@ -46,7 +46,7 @@ struct Coordinate {
         )
     }
 
-    func move(direction: Direction, pixels: Int = 1) -> Coordinate {
+    func move(direction: Direction, pixels: Int = 2) -> Coordinate {
         switch direction {
         case .left:
             return left(pixels: pixels)
@@ -88,6 +88,7 @@ struct Coordinate {
 }
 
 class Screen {
+    static let framesPerSecond = 30
     static let movementSpeed = 8.0
     static let origin = Coordinate(x: 0, y: 0)
     static let size = 128
@@ -136,6 +137,7 @@ class GameScene: SKScene {
     }
 
     func setUpScene() {
+        view?.preferredFramesPerSecond = Screen.framesPerSecond
         ship = screen.display(imageNamed: "ship")
         flame = screen.display(imageNamed: "flame_\(flameSprite)")
     }
@@ -153,12 +155,12 @@ class GameScene: SKScene {
         if flameSprite > 4 {
             flameSprite = 0
         }
-        flame?.removeFromParent()
-        flame = screen.display(imageNamed: "flame_\(flameSprite)")
+        flame.texture = SKTexture(imageNamed: "flame_\(flameSprite)")
+        flame.texture?.filteringMode = .nearest
         flame.position = currentCoordinate.move(direction: .down, pixels: Sprite.size).toPosition()
         if let fire = fire {
             let coordinate = Coordinate.from(position: fire.position)
-            let newCoordinate = coordinate.move(direction: .up, pixels: 2)
+            let newCoordinate = coordinate.move(direction: .up, pixels: 4)
             if newCoordinate.y > Screen.origin.y {
                 fire.position = newCoordinate.toPosition()
             } else {
@@ -183,7 +185,7 @@ class GameScene: SKScene {
         }
         if keyCode == KeyCodes.zKey && fire == nil {
             fire = screen.display(imageNamed: "fire")
-            fire!.position = currentCoordinate.move(direction: .up, pixels: Sprite.size).toPosition()
+            fire!.position = currentCoordinate.move(direction: .up, pixels: 4).toPosition()
         }
     }
 }
