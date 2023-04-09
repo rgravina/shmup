@@ -29,26 +29,30 @@ struct Coordinate {
     var y: Int
 
     static func from(position: CGPoint) -> Coordinate {
-        return Coordinate(x: Int(position.x/Screen.scale) + 64, y: Int(position.y * -1/Screen.scale) + 64)
+        return Coordinate(
+            x: Int(position.x/Screen.scale) + Screen.halfScreenSize,
+            y: Int(-position.y/Screen.scale) + Screen.halfScreenSize
+        )
     }
 
     func toPosition() -> CGPoint {
         return CGPoint(
-            x: (CGFloat(x) - 64) * Screen.scale,
-            y: (CGFloat(y * -1) + 64) * Screen.scale
+            x: CGFloat(x - Screen.halfScreenSize) * Screen.scale,
+            y: CGFloat(-y + Screen.halfScreenSize) * Screen.scale
         )
     }
 }
 
 struct Screen {
-    static var movementSpeed = 8.0
-    static var origin = Coordinate(x: 0, y: 0)
-    static var size = 128
-    static var scale = 8.0
+    static let movementSpeed = 8.0
+    static let origin = Coordinate(x: 0, y: 0)
+    static let size = 128
+    static let halfScreenSize = size/2
+    static let scale = 8.0
 }
 
 struct Sprite {
-    static var size = 8
+    static let size = 8
 }
 
 class GameScene: SKScene {
