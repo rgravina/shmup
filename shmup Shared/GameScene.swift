@@ -41,6 +41,15 @@ struct Coordinate {
             y: CGFloat(-y + Screen.halfScreenSize) * Screen.scale
         )
     }
+
+    func left() -> Coordinate { Coordinate(x: x - 1, y: y) }
+    func right() -> Coordinate { Coordinate(x: x + 1, y: y) }
+    func down() -> Coordinate { Coordinate(x: x, y: y + 1) }
+    func up() -> Coordinate { Coordinate(x: x, y: y - 1) }
+    func moveXStart() -> Coordinate { Coordinate(x: Screen.origin.x, y: y) }
+    func moveXEnd() -> Coordinate { Coordinate(x: Screen.edge.x, y: y) }
+    func moveYStart() -> Coordinate { Coordinate(x: x, y: Screen.origin.y) }
+    func moveYEnd() -> Coordinate { Coordinate(x: x, y: Screen.edge.y) }
 }
 
 class Screen {
@@ -49,6 +58,7 @@ class Screen {
     static let size = 128
     static let halfScreenSize = size/2
     static let scale = 8.0
+    static let edge = Coordinate(x: Screen.size - Sprite.size, y: Screen.size - Sprite.size)
     private var scene: SKScene!
 
     func use(scene: SKScene) {
@@ -72,6 +82,7 @@ struct Sprite {
 
 class GameScene: SKScene {
     private var currentDirection: Direction = .none
+    private var currentCoordinate: Coordinate = Coordinate(x: Screen.halfScreenSize, y: Screen.halfScreenSize)
     private var ship: SKSpriteNode!
     private var screen: Screen = Screen()
 
@@ -97,43 +108,31 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         switch currentDirection {
         case .left:
-            ship.position = CGPoint(
-                x: ship.position.x - speed,
-                y: ship.position.y
-            )
+            currentCoordinate = currentCoordinate.left()
         case .right:
-            ship.position = CGPoint(
-                x: ship.position.x + speed,
-                y: ship.position.y
-            )
+            currentCoordinate = currentCoordinate.right()
         case .down:
-            ship.position = CGPoint(
-                x: ship.position.x,
-                y: ship.position.y - speed
-            )
+            currentCoordinate = currentCoordinate.down()
         case .up:
-           ship.position = CGPoint(
-               x: ship.position.x,
-               y: ship.position.y + speed
-           )
+            currentCoordinate = currentCoordinate.up()
         case .none:
             break
         }
 
-        let cooordinate = Coordinate.from(position: ship.position)
-        let edge = Screen.size - Sprite.size
-        if cooordinate.x < Screen.origin.x {
-            ship.position = Coordinate(x: edge, y: cooordinate.y).toPosition()
+        if currentCoordinate.x < Screen.origin.x {
+            currentCoordinate = currentCoordinate.moveXEnd()
         }
-        if cooordinate.x > edge {
-            ship.position = Coordinate(x: Screen.origin.x, y: cooordinate.y).toPosition()
+        if currentCoordinate.x > Screen.edge.x {
+            currentCoordinate = currentCoordinate.moveXStart()
         }
-        if cooordinate.y < Screen.origin.y {
-            ship.position = Coordinate(x: cooordinate.x, y: edge).toPosition()
+        if currentCoordinate.y < Screen.origin.y {
+            currentCoordinate = currentCoordinate.moveYEnd()
         }
-        if cooordinate.y > edge {
-            ship.position = Coordinate(x: cooordinate.x, y: Screen.origin.y).toPosition()
+        if currentCoordinate.y > Screen.edge.y {
+            currentCoordinate = currentCoordinate.moveYStart()
         }
+
+        ship.position = currentCoordinate.toPosition()
     }
 
     override func keyUp(with event: NSEvent) {
