@@ -153,6 +153,7 @@ class GameScene: SKScene {
                 fire.position = newCoordinate.toPosition()
             } else {
                 fire.removeFromParent()
+                self.fire = nil
             }
         }
     }
@@ -170,8 +171,7 @@ class GameScene: SKScene {
         if direction != .none {
             currentDirection = direction
         }
-        if keyCode == KeyCodes.zKey {
-            fire?.removeFromParent()
+        if keyCode == KeyCodes.zKey && fire == nil {
             fire = screen.display(imageNamed: "fire")
             fire!.position = currentCoordinate.move(direction: .up, pixels: Sprite.size).toPosition()
         }
