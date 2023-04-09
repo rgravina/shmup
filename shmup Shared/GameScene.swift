@@ -9,6 +9,21 @@ enum KeyCodes: UInt16 {
     case right = 124
     case down = 125
     case up = 126
+
+    func toDirection() -> Direction  {
+        switch(self) {
+        case KeyCodes.left:
+            return .left
+        case KeyCodes.right:
+            return .right
+        case KeyCodes.down:
+            return .down
+        case KeyCodes.up:
+            return .up
+        default:
+            return .none
+        }
+    }
 }
 
 struct Coordinate {
@@ -113,40 +128,15 @@ class GameScene: SKScene {
         }
     }
 
-
     override func keyUp(with event: NSEvent) {
-        if (keyCodeToDirection(keyCode: event.keyCode) == currentDirection) {
+        let keyCode = KeyCodes(rawValue: event.keyCode)
+        if (keyCode?.toDirection() == currentDirection) {
             currentDirection = .none
         }
     }
 
     override func keyDown(with event: NSEvent) {
-        currentDirection = keyCodeToDirection(keyCode: event.keyCode)
-    }
-
-    private func keyCodeToDirection(keyCode: UInt16) -> Direction  {
-        switch(keyCode) {
-        case KeyCodes.left.rawValue:
-            return .left
-        case KeyCodes.right.rawValue:
-            return .right
-        case KeyCodes.down.rawValue:
-            return .down
-        case KeyCodes.up.rawValue:
-            return .up
-        default:
-            return .none
-        }
-    }
-
-    private func coords(position: CGPoint) -> Coordinate {
-        return Coordinate(x: Int(position.x/speed) + 64, y: Int(position.y * -1/speed) + 64)
-    }
-
-    private func position(coordinate: Coordinate) -> CGPoint {
-        return CGPoint(
-            x: (CGFloat(coordinate.x) - 64) * speed,
-            y: (CGFloat(coordinate.y * -1) + 64) * speed
-        )
+        let keyCode = KeyCodes(rawValue: event.keyCode)
+        currentDirection = keyCode?.toDirection() ?? Direction.none
     }
 }
