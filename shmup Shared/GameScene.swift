@@ -5,23 +5,21 @@ enum Direction {
 }
 
 enum KeyCodes: UInt16 {
-    case left = 123
-    case right = 124
-    case down = 125
-    case up = 126
+    case leftArrow = 123
+    case rightArrow = 124
+    case downArrow = 125
+    case upArrow = 126
 
-    func toDirection() -> Direction  {
-        switch(self) {
-        case KeyCodes.left:
+    func toDirection() -> Direction {
+        switch self {
+        case KeyCodes.leftArrow:
             return .left
-        case KeyCodes.right:
+        case KeyCodes.rightArrow:
             return .right
-        case KeyCodes.down:
+        case KeyCodes.downArrow:
             return .down
-        case KeyCodes.up:
+        case KeyCodes.upArrow:
             return .up
-        default:
-            return .none
         }
     }
 }
@@ -62,18 +60,18 @@ class GameScene: SKScene {
             print("Failed to load GameScene.sks")
             abort()
         }
-        
+
         scene.scaleMode = .aspectFill
-        
+
         return scene
     }
-    
+
     func setUpScene() {
         speed = Screen.movementSpeed
         ship = displaySprite(imageNamed: "ship")
     }
 
-    private func displaySprite(imageNamed: String) -> SKSpriteNode  {
+    private func displaySprite(imageNamed: String) -> SKSpriteNode {
         let sprite = SKSpriteNode(imageNamed: imageNamed)
         sprite.anchorPoint = CGPoint(x: 0, y: 1.0)
         sprite.setScale(Screen.scale)
@@ -81,13 +79,13 @@ class GameScene: SKScene {
         addChild(sprite)
         return sprite
     }
-    
+
     override func didMove(to view: SKView) {
         self.setUpScene()
     }
 
     override func update(_ currentTime: TimeInterval) {
-        switch(currentDirection) {
+        switch currentDirection {
         case .left:
             ship.position = CGPoint(
                 x: ship.position.x - speed,
@@ -114,23 +112,23 @@ class GameScene: SKScene {
 
         let cooordinate = Coordinate.from(position: ship.position)
         let edge = Screen.size - Sprite.size
-        if (cooordinate.x < Screen.origin.x) {
+        if cooordinate.x < Screen.origin.x {
             ship.position = Coordinate(x: edge, y: cooordinate.y).toPosition()
         }
-        if (cooordinate.x > edge) {
+        if cooordinate.x > edge {
             ship.position = Coordinate(x: Screen.origin.x, y: cooordinate.y).toPosition()
         }
-        if (cooordinate.y < Screen.origin.y) {
+        if cooordinate.y < Screen.origin.y {
             ship.position = Coordinate(x: cooordinate.x, y: edge).toPosition()
         }
-        if (cooordinate.y > edge) {
+        if cooordinate.y > edge {
             ship.position = Coordinate(x: cooordinate.x, y: Screen.origin.y).toPosition()
         }
     }
 
     override func keyUp(with event: NSEvent) {
         let keyCode = KeyCodes(rawValue: event.keyCode)
-        if (keyCode?.toDirection() == currentDirection) {
+        if keyCode?.toDirection() == currentDirection {
             currentDirection = .none
         }
     }
