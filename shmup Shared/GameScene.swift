@@ -5,6 +5,8 @@ enum Direction {
 }
 
 enum KeyCodes: UInt16 {
+    case zKey = 6
+    case xKey = 7
     case leftArrow = 123
     case rightArrow = 124
     case downArrow = 125
@@ -20,6 +22,8 @@ enum KeyCodes: UInt16 {
             return .down
         case KeyCodes.upArrow:
             return .up
+        default:
+            return .none
         }
     }
 }
@@ -42,16 +46,16 @@ struct Coordinate {
         )
     }
 
-    func move(direction: Direction) -> Coordinate {
+    func move(direction: Direction, pixels: Int = 1) -> Coordinate {
         switch direction {
         case .left:
-            return left()
+            return left(pixels: pixels)
         case .right:
-            return right()
+            return right(pixels: pixels)
         case .down:
-            return down()
+            return down(pixels: pixels)
         case .up:
-            return up()
+            return up(pixels: pixels)
         case .none:
             return self
         }
@@ -73,10 +77,10 @@ struct Coordinate {
         return self
     }
 
-    private func left() -> Coordinate { Coordinate(x: x - 1, y: y) }
-    private func right() -> Coordinate { Coordinate(x: x + 1, y: y) }
-    private func down() -> Coordinate { Coordinate(x: x, y: y + 1) }
-    private func up() -> Coordinate { Coordinate(x: x, y: y - 1) }
+    private func left(pixels: Int) -> Coordinate { Coordinate(x: x - pixels, y: y) }
+    private func right(pixels: Int) -> Coordinate { Coordinate(x: x + pixels, y: y) }
+    private func down(pixels: Int) -> Coordinate { Coordinate(x: x, y: y + pixels) }
+    private func up(pixels: Int) -> Coordinate { Coordinate(x: x, y: y - pixels) }
     private func moveXStart() -> Coordinate { Coordinate(x: Screen.origin.x, y: y) }
     private func moveXEnd() -> Coordinate { Coordinate(x: Screen.edge.x, y: y) }
     private func moveYStart() -> Coordinate { Coordinate(x: x, y: Screen.origin.y) }
@@ -115,6 +119,7 @@ class GameScene: SKScene {
     private var currentDirection: Direction = .none
     private var currentCoordinate: Coordinate = Coordinate(x: Screen.halfScreenSize, y: Screen.halfScreenSize)
     private var ship: SKSpriteNode!
+    private var fire: SKSpriteNode?
     private var screen: Screen = Screen()
 
     class func newGameScene() -> GameScene {
@@ -141,6 +146,15 @@ class GameScene: SKScene {
             .move(direction: currentDirection)
             .wrapIfNeeded()
         ship.position = currentCoordinate.toPosition()
+        if let fire = fire {
+            let coordinate = Coordinate.from(position: fire.position)
+            let newCoordinate = coordinate.move(direction: .up, pixels: 2)
+            if newCoordinate.y > Screen.origin.y {
+                fire.position = newCoordinate.toPosition()
+            } else {
+                fire.removeFromParent()
+            }
+        }
     }
 
     override func keyUp(with event: NSEvent) {
@@ -152,6 +166,14 @@ class GameScene: SKScene {
 
     override func keyDown(with event: NSEvent) {
         let keyCode = KeyCodes(rawValue: event.keyCode)
-        currentDirection = keyCode?.toDirection() ?? Direction.none
+        let direction = keyCode?.toDirection() ?? Direction.none
+        if direction != .none {
+            currentDirection = direction
+        }
+        if keyCode == KeyCodes.zKey {
+            fire?.removeFromParent()
+            fire = screen.display(imageNamed: "fire")
+            fire!.position = currentCoordinate.move(direction: .up, pixels: Sprite.size).toPosition()
+        }
     }
 }
