@@ -1,7 +1,7 @@
 import SpriteKit
 
 enum Direction {
-    case none, left, right, up, down
+    case none, left, right, down, up
 }
 
 enum KeyCodes: UInt16 {
@@ -12,7 +12,10 @@ enum KeyCodes: UInt16 {
 }
 
 class GameScene: SKScene {
+    private let movementSpeed = 8.0
+    private let spriteScale = 8.0
     private var currentDirection: Direction = .none
+    private var ship: SKSpriteNode!
 
     class func newGameScene() -> GameScene {
         guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
@@ -26,14 +29,16 @@ class GameScene: SKScene {
     }
     
     func setUpScene() {
-        displaySprite(imageNamed: "ship")
+        speed = movementSpeed
+        ship = displaySprite(imageNamed: "ship")
     }
 
-    private func displaySprite(imageNamed: String) {
+    private func displaySprite(imageNamed: String) -> SKSpriteNode  {
         let sprite = SKSpriteNode(imageNamed: imageNamed)
-        sprite.setScale(8)
+        sprite.setScale(spriteScale)
         sprite.texture?.filteringMode = .nearest
         addChild(sprite)
+        return sprite
     }
     
     override func didMove(to view: SKView) {
@@ -41,25 +46,55 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
+        switch(currentDirection) {
+        case .left:
+            ship.position = CGPoint(
+                x: ship.position.x - speed,
+                y: ship.position.y
+            )
+        case .right:
+            ship.position = CGPoint(
+                x: ship.position.x + speed,
+                y: ship.position.y
+            )
+        case .down:
+            ship.position = CGPoint(
+                x: ship.position.x,
+                y: ship.position.y - speed
+            )
+        case .up:
+           ship.position = CGPoint(
+               x: ship.position.x,
+               y: ship.position.y + speed
+           )
+        case .none:
+            break
+        }
     }
 
 
     override func keyUp(with event: NSEvent) {
-        currentDirection = .none
+        if (keyCodeToDirection(keyCode: event.keyCode) == currentDirection) {
+            currentDirection = .none
+        }
     }
 
     override func keyDown(with event: NSEvent) {
-        switch(event.keyCode) {
+        currentDirection = keyCodeToDirection(keyCode: event.keyCode)
+    }
+
+    private func keyCodeToDirection(keyCode: UInt16) -> Direction  {
+        switch(keyCode) {
         case KeyCodes.left.rawValue:
-            currentDirection = .left
+            return .left
         case KeyCodes.right.rawValue:
-            currentDirection = .right
+            return .right
         case KeyCodes.down.rawValue:
-            currentDirection = .down
+            return .down
         case KeyCodes.up.rawValue:
-            currentDirection = .up
+            return .up
         default:
-            currentDirection = .none
+            return .none
         }
     }
 }
