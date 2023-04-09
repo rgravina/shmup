@@ -14,11 +14,31 @@ enum KeyCodes: UInt16 {
 struct Coordinate {
     var x: Int
     var y: Int
+
+    static func from(position: CGPoint) -> Coordinate {
+        return Coordinate(x: Int(position.x/Screen.scale) + 64, y: Int(position.y * -1/Screen.scale) + 64)
+    }
+
+    func toPosition() -> CGPoint {
+        return CGPoint(
+            x: (CGFloat(x) - 64) * Screen.scale,
+            y: (CGFloat(y * -1) + 64) * Screen.scale
+        )
+    }
+}
+
+struct Screen {
+    static var movementSpeed = 8.0
+    static var origin = Coordinate(x: 0, y: 0)
+    static var size = 128
+    static var scale = 8.0
+}
+
+struct Sprite {
+    static var size = 8
 }
 
 class GameScene: SKScene {
-    private let movementSpeed = 8.0
-    private let spriteScale = 8.0
     private var currentDirection: Direction = .none
     private var ship: SKSpriteNode!
 
@@ -34,14 +54,14 @@ class GameScene: SKScene {
     }
     
     func setUpScene() {
-        speed = movementSpeed
+        speed = Screen.movementSpeed
         ship = displaySprite(imageNamed: "ship")
     }
 
     private func displaySprite(imageNamed: String) -> SKSpriteNode  {
         let sprite = SKSpriteNode(imageNamed: imageNamed)
         sprite.anchorPoint = CGPoint(x: 0, y: 1.0)
-        sprite.setScale(spriteScale)
+        sprite.setScale(Screen.scale)
         sprite.texture?.filteringMode = .nearest
         addChild(sprite)
         return sprite
@@ -77,18 +97,19 @@ class GameScene: SKScene {
             break
         }
 
-        let cooordinate = coords(position: ship.position)
-        if (cooordinate.x < 0) {
-            ship.position = position(coordinate: Coordinate(x: 120, y: cooordinate.y))
+        let cooordinate = Coordinate.from(position: ship.position)
+        let edge = Screen.size - Sprite.size
+        if (cooordinate.x < Screen.origin.x) {
+            ship.position = Coordinate(x: edge, y: cooordinate.y).toPosition()
         }
-        if (cooordinate.x > 120) {
-            ship.position = position(coordinate: Coordinate(x: 0, y: cooordinate.y))
+        if (cooordinate.x > edge) {
+            ship.position = Coordinate(x: Screen.origin.x, y: cooordinate.y).toPosition()
         }
-        if (cooordinate.y < 0) {
-            ship.position = position(coordinate: Coordinate(x: cooordinate.x, y: 120))
+        if (cooordinate.y < Screen.origin.y) {
+            ship.position = Coordinate(x: cooordinate.x, y: edge).toPosition()
         }
-        if (cooordinate.y > 120) {
-            ship.position = position(coordinate: Coordinate(x: cooordinate.x, y: 0))
+        if (cooordinate.y > edge) {
+            ship.position = Coordinate(x: cooordinate.x, y: Screen.origin.y).toPosition()
         }
     }
 
