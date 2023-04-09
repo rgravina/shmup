@@ -119,6 +119,8 @@ class GameScene: SKScene {
     private var currentDirection: Direction = .none
     private var currentCoordinate: Coordinate = Coordinate(x: Screen.halfScreenSize, y: Screen.halfScreenSize)
     private var ship: SKSpriteNode!
+    private var flame: SKSpriteNode!
+    private var flameSprite: Int = 0
     private var fire: SKSpriteNode?
     private var screen: Screen = Screen()
 
@@ -135,6 +137,7 @@ class GameScene: SKScene {
 
     func setUpScene() {
         ship = screen.display(imageNamed: "ship")
+        flame = screen.display(imageNamed: "flame_\(flameSprite)")
     }
 
     override func didMove(to view: SKView) {
@@ -146,6 +149,13 @@ class GameScene: SKScene {
             .move(direction: currentDirection)
             .wrapIfNeeded()
         ship.position = currentCoordinate.toPosition()
+        flameSprite += 1
+        if flameSprite > 4 {
+            flameSprite = 0
+        }
+        flame?.removeFromParent()
+        flame = screen.display(imageNamed: "flame_\(flameSprite)")
+        flame.position = currentCoordinate.move(direction: .down, pixels: Sprite.size).toPosition()
         if let fire = fire {
             let coordinate = Coordinate.from(position: fire.position)
             let newCoordinate = coordinate.move(direction: .up, pixels: 2)
