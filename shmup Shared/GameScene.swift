@@ -43,12 +43,27 @@ struct Coordinate {
     }
 }
 
-struct Screen {
+class Screen {
     static let movementSpeed = 8.0
     static let origin = Coordinate(x: 0, y: 0)
     static let size = 128
     static let halfScreenSize = size/2
     static let scale = 8.0
+    private var scene: SKScene!
+
+    func use(scene: SKScene) {
+        scene.speed = Screen.movementSpeed
+        self.scene = scene
+    }
+
+    func display(imageNamed: String) -> SKSpriteNode {
+        let sprite = SKSpriteNode(imageNamed: imageNamed)
+        sprite.anchorPoint = CGPoint(x: 0, y: 1.0)
+        sprite.setScale(Screen.scale)
+        sprite.texture?.filteringMode = .nearest
+        scene.addChild(sprite)
+        return sprite
+    }
 }
 
 struct Sprite {
@@ -58,6 +73,7 @@ struct Sprite {
 class GameScene: SKScene {
     private var currentDirection: Direction = .none
     private var ship: SKSpriteNode!
+    private var screen: Screen = Screen()
 
     class func newGameScene() -> GameScene {
         guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
@@ -66,22 +82,12 @@ class GameScene: SKScene {
         }
 
         scene.scaleMode = .aspectFill
-
+        scene.screen.use(scene: scene)
         return scene
     }
 
     func setUpScene() {
-        speed = Screen.movementSpeed
-        ship = displaySprite(imageNamed: "ship")
-    }
-
-    private func displaySprite(imageNamed: String) -> SKSpriteNode {
-        let sprite = SKSpriteNode(imageNamed: imageNamed)
-        sprite.anchorPoint = CGPoint(x: 0, y: 1.0)
-        sprite.setScale(Screen.scale)
-        sprite.texture?.filteringMode = .nearest
-        addChild(sprite)
-        return sprite
+        ship = screen.display(imageNamed: "ship")
     }
 
     override func didMove(to view: SKView) {
