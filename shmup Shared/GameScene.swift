@@ -102,13 +102,10 @@ class Screen {
         self.scene = scene
     }
 
-    func display(imageNamed: String) -> SKSpriteNode {
-        let sprite = SKSpriteNode(imageNamed: imageNamed)
+    static func setup(sprite: SKSpriteNode) {
         sprite.anchorPoint = CGPoint(x: 0, y: 1.0)
         sprite.setScale(Screen.scale)
         sprite.texture?.filteringMode = .nearest
-        scene.addChild(sprite)
-        return sprite
     }
 }
 
@@ -116,12 +113,60 @@ struct Sprite {
     static let size = 8
 }
 
-class GameScene: SKScene {
-    private var currentDirection: Direction = .none
-    private var currentCoordinate: Coordinate = Coordinate(x: Screen.halfScreenSize, y: Screen.halfScreenSize)
+class Player: SKNode {
+    private(set) var coordinate: Coordinate = Coordinate(x: Screen.halfScreenSize, y: Screen.halfScreenSize)
+    private(set) var direction: Direction = .none
     private var ship: SKSpriteNode!
     private var flame: SKSpriteNode!
     private var flameSprite: Int = 0
+
+    override init() {
+        super.init()
+        self.ship = SKSpriteNode(imageNamed: "ship_0")
+        flame = SKSpriteNode(imageNamed: "flame_0")
+        flame.position = coordinate.move(direction: .down, pixels: Sprite.size).toPosition()
+        Screen.setup(sprite: ship)
+        Screen.setup(sprite: flame)
+        addChild(ship)
+        addChild(flame)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func animateFlame() {
+        flameSprite += 1
+        if flameSprite > 4 {
+            flameSprite = 0
+        }
+        flame.texture = SKTexture(imageNamed: "flame_\(flameSprite)")
+        flame.texture?.filteringMode = .nearest
+    }
+
+    func point(direction: Direction) {
+        switch direction {
+        case .left:
+            ship.texture = SKTexture(imageNamed: "ship_1")
+        case .right:
+            ship.texture = SKTexture(imageNamed: "ship_2")
+        default:
+            ship.texture = SKTexture(imageNamed: "ship_0")
+        }
+        ship.texture?.filteringMode = .nearest
+        self.direction = direction
+    }
+
+    func move() {
+        coordinate = coordinate
+            .move(direction: direction)
+            .wrapIfNeeded()
+        position = coordinate.toPosition()
+    }
+}
+
+class GameScene: SKScene {
+    private var player: Player!
     private var fire: SKSpriteNode?
     private var screen: Screen = Screen()
 
@@ -138,8 +183,8 @@ class GameScene: SKScene {
 
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
-        ship = screen.display(imageNamed: "ship_0")
-        flame = screen.display(imageNamed: "flame_\(flameSprite)")
+        player = Player()
+        addChild(player)
     }
 
     override func didMove(to view: SKView) {
@@ -147,17 +192,8 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        currentCoordinate = currentCoordinate
-            .move(direction: currentDirection)
-            .wrapIfNeeded()
-        ship.position = currentCoordinate.toPosition()
-        flameSprite += 1
-        if flameSprite > 4 {
-            flameSprite = 0
-        }
-        flame.texture = SKTexture(imageNamed: "flame_\(flameSprite)")
-        flame.texture?.filteringMode = .nearest
-        flame.position = currentCoordinate.move(direction: .down, pixels: Sprite.size).toPosition()
+        player.move()
+        player.animateFlame()
         if let fire = fire {
             let coordinate = Coordinate.from(position: fire.position)
             let newCoordinate = coordinate.move(direction: .up, pixels: 4)
@@ -172,10 +208,8 @@ class GameScene: SKScene {
 
     override func keyUp(with event: NSEvent) {
         let keyCode = KeyCodes(rawValue: event.keyCode)
-        if keyCode?.toDirection() == currentDirection {
-            currentDirection = .none
-            ship.texture = SKTexture(imageNamed: "ship_0")
-            ship.texture?.filteringMode = .nearest
+        if keyCode?.toDirection() == player.direction {
+            player.point(direction: .none)
         }
     }
 
@@ -183,20 +217,13 @@ class GameScene: SKScene {
         let keyCode = KeyCodes(rawValue: event.keyCode)
         let direction = keyCode?.toDirection() ?? Direction.none
         if direction != .none {
-            currentDirection = direction
-            switch direction {
-            case .left:
-                ship.texture = SKTexture(imageNamed: "ship_1")
-            case .right:
-                ship.texture = SKTexture(imageNamed: "ship_2")
-            default:
-                ship.texture = SKTexture(imageNamed: "ship_0")
-            }
-            ship.texture?.filteringMode = .nearest
+            player.point(direction: direction)
         }
         if keyCode == KeyCodes.zKey && fire == nil {
-            fire = screen.display(imageNamed: "fire")
-            fire!.position = currentCoordinate.move(direction: .up, pixels: 4).toPosition()
+            fire = SKSpriteNode(imageNamed: "fire")
+            Screen.setup(sprite: fire!)
+            addChild(fire!)
+            fire!.position = player.coordinate.move(direction: .up, pixels: 4).toPosition()
         }
     }
 }
