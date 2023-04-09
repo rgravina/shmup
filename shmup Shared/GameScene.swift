@@ -113,22 +113,24 @@ struct Sprite {
     static let size = 8
 }
 
-class Player: SKNode {
+class Player {
     private(set) var coordinate: Coordinate = Coordinate(x: Screen.halfScreenSize, y: Screen.halfScreenSize)
     private(set) var direction: Direction = .none
+    private(set) var node: SKNode!
     private var ship: SKSpriteNode!
     private var flame: SKSpriteNode!
     private var flameSprite: Int = 0
 
-    override init() {
-        super.init()
-        self.ship = SKSpriteNode(imageNamed: "ship_0")
+    init() {
+        node = SKNode()
+        ship = SKSpriteNode(imageNamed: "ship_0")
+        node.position = coordinate.toPosition()
         flame = SKSpriteNode(imageNamed: "flame_0")
         flame.position = coordinate.move(direction: .down, pixels: Sprite.size).toPosition()
         Screen.setup(sprite: ship)
         Screen.setup(sprite: flame)
-        addChild(ship)
-        addChild(flame)
+        node.addChild(ship)
+        node.addChild(flame)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -161,7 +163,7 @@ class Player: SKNode {
         coordinate = coordinate
             .move(direction: direction)
             .wrapIfNeeded()
-        position = coordinate.toPosition()
+        node.position = coordinate.toPosition()
     }
 }
 
@@ -184,7 +186,7 @@ class GameScene: SKScene {
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player()
-        addChild(player)
+        addChild(player.node)
     }
 
     override func didMove(to view: SKView) {
