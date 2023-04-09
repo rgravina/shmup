@@ -42,14 +42,45 @@ struct Coordinate {
         )
     }
 
-    func left() -> Coordinate { Coordinate(x: x - 1, y: y) }
-    func right() -> Coordinate { Coordinate(x: x + 1, y: y) }
-    func down() -> Coordinate { Coordinate(x: x, y: y + 1) }
-    func up() -> Coordinate { Coordinate(x: x, y: y - 1) }
-    func moveXStart() -> Coordinate { Coordinate(x: Screen.origin.x, y: y) }
-    func moveXEnd() -> Coordinate { Coordinate(x: Screen.edge.x, y: y) }
-    func moveYStart() -> Coordinate { Coordinate(x: x, y: Screen.origin.y) }
-    func moveYEnd() -> Coordinate { Coordinate(x: x, y: Screen.edge.y) }
+    func move(direction: Direction) -> Coordinate {
+        switch direction {
+        case .left:
+            return left()
+        case .right:
+            return right()
+        case .down:
+            return down()
+        case .up:
+            return up()
+        case .none:
+            return self
+        }
+    }
+
+    func wrapIfNeeded() -> Coordinate {
+        if x < Screen.origin.x {
+            return moveXEnd()
+        }
+        if x > Screen.edge.x {
+            return moveXStart()
+        }
+        if y < Screen.origin.y {
+            return moveYEnd()
+        }
+        if y > Screen.edge.y {
+            return moveYStart()
+        }
+        return self
+    }
+
+    private func left() -> Coordinate { Coordinate(x: x - 1, y: y) }
+    private func right() -> Coordinate { Coordinate(x: x + 1, y: y) }
+    private func down() -> Coordinate { Coordinate(x: x, y: y + 1) }
+    private func up() -> Coordinate { Coordinate(x: x, y: y - 1) }
+    private func moveXStart() -> Coordinate { Coordinate(x: Screen.origin.x, y: y) }
+    private func moveXEnd() -> Coordinate { Coordinate(x: Screen.edge.x, y: y) }
+    private func moveYStart() -> Coordinate { Coordinate(x: x, y: Screen.origin.y) }
+    private func moveYEnd() -> Coordinate { Coordinate(x: x, y: Screen.edge.y) }
 }
 
 class Screen {
@@ -106,32 +137,9 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        switch currentDirection {
-        case .left:
-            currentCoordinate = currentCoordinate.left()
-        case .right:
-            currentCoordinate = currentCoordinate.right()
-        case .down:
-            currentCoordinate = currentCoordinate.down()
-        case .up:
-            currentCoordinate = currentCoordinate.up()
-        case .none:
-            break
-        }
-
-        if currentCoordinate.x < Screen.origin.x {
-            currentCoordinate = currentCoordinate.moveXEnd()
-        }
-        if currentCoordinate.x > Screen.edge.x {
-            currentCoordinate = currentCoordinate.moveXStart()
-        }
-        if currentCoordinate.y < Screen.origin.y {
-            currentCoordinate = currentCoordinate.moveYEnd()
-        }
-        if currentCoordinate.y > Screen.edge.y {
-            currentCoordinate = currentCoordinate.moveYStart()
-        }
-
+        currentCoordinate = currentCoordinate
+            .move(direction: currentDirection)
+            .wrapIfNeeded()
         ship.position = currentCoordinate.toPosition()
     }
 
