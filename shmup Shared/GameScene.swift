@@ -131,15 +131,6 @@ class Player {
         node.addChild(flame)
     }
 
-    func animateFlame() {
-        flameSprite += 1
-        if flameSprite > 4 {
-            flameSprite = 0
-        }
-        flame.texture = SKTexture(imageNamed: "flame_\(flameSprite)")
-        flame.texture?.filteringMode = .nearest
-    }
-
     func point(direction: Direction) {
         switch direction {
         case .left:
@@ -158,6 +149,16 @@ class Player {
             .move(direction: direction)
             .wrapIfNeeded()
         node.position = coordinate.toPosition()
+        animateFlame()
+    }
+
+    private func animateFlame() {
+        flameSprite += 1
+        if flameSprite > 4 {
+            flameSprite = 0
+        }
+        flame.texture = SKTexture(imageNamed: "flame_\(flameSprite)")
+        flame.texture?.filteringMode = .nearest
     }
 }
 
@@ -213,7 +214,6 @@ class GameScene: SKScene {
 
     override func update(_ currentTime: TimeInterval) {
         player.move()
-        player.animateFlame()
         if let plasma = plasma {
             plasma.move()
             if plasma.coordinate.y < Screen.origin.y {
