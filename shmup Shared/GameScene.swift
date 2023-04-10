@@ -117,16 +117,23 @@ class Player {
     private(set) var node: SKNode!
     private var ship: SKSpriteNode!
     private var flame: SKSpriteNode!
+    private var flash: SKSpriteNode!
     private var flameSprite: Int = 0
+    private var flashSprite: Int = 0
 
     init() {
         node = SKNode()
         node.position = coordinate.toPosition()
         ship = SKSpriteNode(imageNamed: "ship_0")
         flame = SKSpriteNode(imageNamed: "flame_0")
+        flash = SKSpriteNode(imageNamed: "flash_0")
         flame.position = coordinate.move(direction: .down, pixels: Sprite.size).toPosition()
+        flash.position = coordinate
+            .move(direction: .up, pixels: Sprite.size - 2)
+            .toPosition()
         Screen.setup(sprite: ship)
         Screen.setup(sprite: flame)
+        Screen.setup(sprite: flash)
         node.addChild(ship)
         node.addChild(flame)
     }
@@ -147,9 +154,11 @@ class Player {
     func update() {
         move()
         animateFlame()
+        animateFlash()
     }
 
     func fire() -> PlasmaBall {
+        node.addChild(flash)
         return PlasmaBall(coordinate: coordinate)
     }
 
@@ -167,6 +176,16 @@ class Player {
         }
         flame.texture = SKTexture(imageNamed: "flame_\(flameSprite)")
         flame.texture?.filteringMode = .nearest
+    }
+
+    private func animateFlash() {
+        flashSprite += 1
+        if flashSprite > 4 {
+            flashSprite = 0
+            flash.removeFromParent()
+        }
+        flash.texture = SKTexture(imageNamed: "flash_\(flashSprite)")
+        flash.texture?.filteringMode = .nearest
     }
 }
 
