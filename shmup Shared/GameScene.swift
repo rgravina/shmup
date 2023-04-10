@@ -131,11 +131,13 @@ class Player {
         flash.position = coordinate
             .move(direction: .up, pixels: Sprite.size - 2)
             .toPosition()
+        flash.isHidden = true
         Screen.setup(sprite: ship)
         Screen.setup(sprite: flame)
         Screen.setup(sprite: flash)
         node.addChild(ship)
         node.addChild(flame)
+        node.addChild(flash)
     }
 
     func point(direction: Direction) {
@@ -158,7 +160,7 @@ class Player {
     }
 
     func fire() -> PlasmaBall {
-        node.addChild(flash)
+        flash.isHidden = false
         return PlasmaBall(coordinate: coordinate)
     }
 
@@ -179,10 +181,13 @@ class Player {
     }
 
     private func animateFlash() {
+        if flash.isHidden {
+            return
+        }
         flashSprite += 1
         if flashSprite > 4 {
             flashSprite = 0
-            flash.removeFromParent()
+            flash.isHidden = true
         }
         flash.texture = SKTexture(imageNamed: "flash_\(flashSprite)")
         flash.texture?.filteringMode = .nearest
