@@ -131,10 +131,6 @@ class Player {
         node.addChild(flame)
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     func animateFlame() {
         flameSprite += 1
         if flameSprite > 4 {
@@ -165,9 +161,33 @@ class Player {
     }
 }
 
+class PlasmaBall {
+    private(set) var coordinate: Coordinate
+    private(set) var node: SKNode!
+    private var fire: SKSpriteNode!
+
+    init(coordinate: Coordinate) {
+        self.coordinate = coordinate
+        node = SKNode()
+        fire = SKSpriteNode(imageNamed: "fire")
+        Screen.setup(sprite: fire)
+        node.addChild(fire)
+        move()
+    }
+
+    func move() {
+        coordinate = coordinate.move(direction: .up, pixels: 4)
+        node.position = coordinate.toPosition()
+    }
+
+    func remove() {
+        node.removeFromParent()
+    }
+}
+
 class GameScene: SKScene {
     private var player: Player!
-    private var fire: SKSpriteNode?
+    private var plasma: PlasmaBall?
     private var screen: Screen = Screen()
 
     class func newGameScene() -> GameScene {
@@ -194,14 +214,11 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         player.move()
         player.animateFlame()
-        if let fire = fire {
-            let coordinate = Coordinate.from(position: fire.position)
-            let newCoordinate = coordinate.move(direction: .up, pixels: 4)
-            if newCoordinate.y > Screen.origin.y {
-                fire.position = newCoordinate.toPosition()
-            } else {
-                fire.removeFromParent()
-                self.fire = nil
+        if let plasma = plasma {
+            plasma.move()
+            if plasma.coordinate.y < Screen.origin.y {
+                plasma.remove()
+                self.plasma = nil
             }
         }
     }
@@ -219,11 +236,9 @@ class GameScene: SKScene {
         if direction != .none {
             player.point(direction: direction)
         }
-        if keyCode == KeyCodes.zKey && fire == nil {
-            fire = SKSpriteNode(imageNamed: "fire")
-            Screen.setup(sprite: fire!)
-            addChild(fire!)
-            fire!.position = player.coordinate.move(direction: .up, pixels: 4).toPosition()
+        if keyCode == KeyCodes.zKey && plasma == nil {
+            plasma = PlasmaBall(coordinate: player.coordinate)
+            addChild(plasma!.node)
         }
     }
 }
