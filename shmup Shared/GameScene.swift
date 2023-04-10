@@ -91,15 +91,13 @@ class Screen {
     static let framesPerSecond = 30
     static let movementSpeed = 8.0
     static let origin = Coordinate(x: 0, y: 0)
+    static let edge = Coordinate(x: Screen.size - Sprite.size, y: Screen.size - Sprite.size)
     static let size = 128
     static let halfScreenSize = size/2
     static let scale = 8.0
-    static let edge = Coordinate(x: Screen.size - Sprite.size, y: Screen.size - Sprite.size)
-    private var scene: SKScene!
 
     func use(scene: SKScene) {
         scene.speed = Screen.movementSpeed
-        self.scene = scene
     }
 
     static func setup(sprite: SKSpriteNode) {
@@ -123,8 +121,8 @@ class Player {
 
     init() {
         node = SKNode()
-        ship = SKSpriteNode(imageNamed: "ship_0")
         node.position = coordinate.toPosition()
+        ship = SKSpriteNode(imageNamed: "ship_0")
         flame = SKSpriteNode(imageNamed: "flame_0")
         flame.position = coordinate.move(direction: .down, pixels: Sprite.size).toPosition()
         Screen.setup(sprite: ship)
