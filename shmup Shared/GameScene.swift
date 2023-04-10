@@ -144,12 +144,20 @@ class Player {
         self.direction = direction
     }
 
-    func move() {
+    func update() {
+        move()
+        animateFlame()
+    }
+
+    func fire() -> PlasmaBall {
+        return PlasmaBall(coordinate: coordinate)
+    }
+
+    private func move() {
         coordinate = coordinate
             .move(direction: direction)
             .wrapIfNeeded()
         node.position = coordinate.toPosition()
-        animateFlame()
     }
 
     private func animateFlame() {
@@ -165,24 +173,28 @@ class Player {
 class PlasmaBall {
     private(set) var coordinate: Coordinate
     private(set) var node: SKNode!
-    private var fire: SKSpriteNode!
+    private var ball: SKSpriteNode!
 
     init(coordinate: Coordinate) {
         self.coordinate = coordinate
         node = SKNode()
-        fire = SKSpriteNode(imageNamed: "fire")
-        Screen.setup(sprite: fire)
-        node.addChild(fire)
+        ball = SKSpriteNode(imageNamed: "fire")
+        Screen.setup(sprite: ball)
+        node.addChild(ball)
         move()
     }
 
-    func move() {
-        coordinate = coordinate.move(direction: .up, pixels: 4)
-        node.position = coordinate.toPosition()
+    func update() {
+        move()
     }
 
     func remove() {
         node.removeFromParent()
+    }
+
+    private func move() {
+        coordinate = coordinate.move(direction: .up, pixels: 4)
+        node.position = coordinate.toPosition()
     }
 }
 
@@ -213,9 +225,9 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        player.move()
+        player.update()
         if let plasma = plasma {
-            plasma.move()
+            plasma.update()
             if plasma.coordinate.y < Screen.origin.y {
                 plasma.remove()
                 self.plasma = nil
@@ -237,7 +249,7 @@ class GameScene: SKScene {
             player.point(direction: direction)
         }
         if keyCode == KeyCodes.zKey && plasma == nil {
-            plasma = PlasmaBall(coordinate: player.coordinate)
+            plasma = player.fire()
             addChild(plasma!.node)
         }
     }
