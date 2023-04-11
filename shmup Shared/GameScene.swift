@@ -34,8 +34,8 @@ struct Coordinate {
 
     func toPosition() -> CGPoint {
         return CGPoint(
-            x: CGFloat(x - Screen.halfScreenSize),
-            y: CGFloat(-y + Screen.halfScreenSize)
+            x: CGFloat(x),
+            y: CGFloat(Screen.size - y)
         )
     }
 
@@ -86,7 +86,6 @@ class Screen {
     static let origin = Coordinate(x: 0, y: 0)
     static let edge = Coordinate(x: Screen.size - Sprite.size, y: Screen.size - Sprite.size)
     static let size = 128
-    static let halfScreenSize = size/2
 
     func use(scene: SKScene) {
         scene.speed = Screen.movementSpeed
@@ -107,7 +106,7 @@ struct Sound {
 }
 
 class Player {
-    private(set) var coordinate: Coordinate = Coordinate(x: Screen.halfScreenSize, y: Screen.halfScreenSize)
+    private(set) var coordinate: Coordinate = Coordinate(x: Screen.size/2, y: Screen.size/2)
     private(set) var direction: Direction = .none
     private(set) var node: SKNode!
     private var ship: SKSpriteNode!
@@ -122,10 +121,8 @@ class Player {
         ship = SKSpriteNode(imageNamed: "ship_0")
         flame = SKSpriteNode(imageNamed: "flame_0")
         flash = SKSpriteNode(imageNamed: "flash_0")
-        flame.position = coordinate.move(direction: .down, pixels: Sprite.size).toPosition()
-        flash.position = coordinate
-            .move(direction: .up, pixels: Sprite.size - 2)
-            .toPosition()
+        flame.position = CGPoint(x: flame.position.x, y: flame.position.y - CGFloat(Sprite.size))
+        flash.position = CGPoint(x: flash.position.x, y: flash.position.y + CGFloat(Sprite.size - 2))
         flash.isHidden = true
         Screen.setup(sprite: ship)
         Screen.setup(sprite: flame)
@@ -213,7 +210,7 @@ class PlasmaBall {
     }
 
     private func move() {
-        coordinate = coordinate.move(direction: .up, pixels: 4)
+        coordinate = coordinate.move(direction: .up, pixels: Sprite.size/2)
         node.position = coordinate.toPosition()
     }
 }
@@ -225,7 +222,7 @@ class GameScene: SKScene {
 
     class func newGameScene() -> GameScene {
         let scene = GameScene(size: CGSize(width: Screen.size, height: Screen.size))
-        scene.anchorPoint = .init(x: 0.5, y: 0.5)
+        scene.anchorPoint = .init(x: 0, y: 0)
         scene.scaleMode = .aspectFill
         scene.screen.use(scene: scene)
         return scene
