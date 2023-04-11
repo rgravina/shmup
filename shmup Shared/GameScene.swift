@@ -231,7 +231,7 @@ class GameScene: SKScene {
     private var screen: Screen = Screen()
 
     class func newGameScene() -> GameScene {
-        let scene = GameScene(size: CGSize(width: 128, height: 128))
+        let scene = GameScene(size: CGSize(width: Screen.size, height: Screen.size))
         scene.anchorPoint = .init(x: 0.5, y: 0.5)
         scene.scaleMode = .aspectFill
         scene.screen.use(scene: scene)
