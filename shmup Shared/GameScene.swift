@@ -111,6 +111,10 @@ struct Sprite {
     static let size = 8
 }
 
+struct Sound {
+    static let laser = SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false)
+}
+
 class Player {
     private(set) var coordinate: Coordinate = Coordinate(x: Screen.halfScreenSize, y: Screen.halfScreenSize)
     private(set) var direction: Direction = .none
@@ -161,6 +165,7 @@ class Player {
 
     func fire() -> PlasmaBall {
         flash.isHidden = false
+        node.run(Sound.laser)
         return PlasmaBall(coordinate: coordinate)
     }
 

@@ -14,6 +14,7 @@
 		97142B5029E22DC300069E6F /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 97142B3D29E22DC200069E6F /* GameScene.sks */; };
 		97142B5129E22DC300069E6F /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97142B3E29E22DC200069E6F /* GameScene.swift */; };
 		97142B5229E22DC300069E6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97142B3F29E22DC300069E6F /* Assets.xcassets */; };
+		9715FBCC29E577D000C53D13 /* laser.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9715FBCB29E577D000C53D13 /* laser.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		97142B4929E22DC300069E6F /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		97142B4C29E22DC300069E6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		97142B4E29E22DC300069E6F /* shmup_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shmup_macOS.entitlements; sourceTree = "<group>"; };
+		9715FBCB29E577D000C53D13 /* laser.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = laser.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +53,7 @@
 		97142B3B29E22DC200069E6F /* shmup Shared */ = {
 			isa = PBXGroup;
 			children = (
+				9715FBCD29E577D600C53D13 /* sounds */,
 				97142B3C29E22DC200069E6F /* Actions.sks */,
 				97142B3D29E22DC200069E6F /* GameScene.sks */,
 				97142B3E29E22DC200069E6F /* GameScene.swift */,
@@ -76,6 +79,14 @@
 				97142B4E29E22DC300069E6F /* shmup_macOS.entitlements */,
 			);
 			path = "shmup macOS";
+			sourceTree = "<group>";
+		};
+		9715FBCD29E577D600C53D13 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				9715FBCB29E577D000C53D13 /* laser.wav */,
+			);
+			path = sounds;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,6 +148,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97142B4D29E22DC300069E6F /* Main.storyboard in Resources */,
+				9715FBCC29E577D000C53D13 /* laser.wav in Resources */,
 				97142B5029E22DC300069E6F /* GameScene.sks in Resources */,
 				97142B5229E22DC300069E6F /* Assets.xcassets in Resources */,
 				97142B4F29E22DC300069E6F /* Actions.sks in Resources */,
