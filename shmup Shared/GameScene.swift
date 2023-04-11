@@ -32,13 +32,6 @@ struct Coordinate {
     var x: Int
     var y: Int
 
-    static func from(position: CGPoint) -> Coordinate {
-        return Coordinate(
-            x: Int(position.x) + Screen.halfScreenSize,
-            y: Int(-position.y) + Screen.halfScreenSize
-        )
-    }
-
     func toPosition() -> CGPoint {
         return CGPoint(
             x: CGFloat(x - Screen.halfScreenSize),
