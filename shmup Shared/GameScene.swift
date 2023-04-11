@@ -34,15 +34,15 @@ struct Coordinate {
 
     static func from(position: CGPoint) -> Coordinate {
         return Coordinate(
-            x: Int(position.x/Screen.scale) + Screen.halfScreenSize,
-            y: Int(-position.y/Screen.scale) + Screen.halfScreenSize
+            x: Int(position.x) + Screen.halfScreenSize,
+            y: Int(-position.y) + Screen.halfScreenSize
         )
     }
 
     func toPosition() -> CGPoint {
         return CGPoint(
-            x: CGFloat(x - Screen.halfScreenSize) * Screen.scale,
-            y: CGFloat(-y + Screen.halfScreenSize) * Screen.scale
+            x: CGFloat(x - Screen.halfScreenSize),
+            y: CGFloat(-y + Screen.halfScreenSize)
         )
     }
 
@@ -94,7 +94,6 @@ class Screen {
     static let edge = Coordinate(x: Screen.size - Sprite.size, y: Screen.size - Sprite.size)
     static let size = 128
     static let halfScreenSize = size/2
-    static let scale = 8.0
 
     func use(scene: SKScene) {
         scene.speed = Screen.movementSpeed
@@ -102,7 +101,6 @@ class Screen {
 
     static func setup(sprite: SKSpriteNode) {
         sprite.anchorPoint = CGPoint(x: 0, y: 1.0)
-        sprite.setScale(Screen.scale)
         sprite.texture?.filteringMode = .nearest
     }
 }
@@ -233,7 +231,7 @@ class GameScene: SKScene {
     private var screen: Screen = Screen()
 
     class func newGameScene() -> GameScene {
-        let scene = GameScene(size: CGSize(width: 1024, height: 1024))
+        let scene = GameScene(size: CGSize(width: 128, height: 128))
         scene.anchorPoint = .init(x: 0.5, y: 0.5)
         scene.scaleMode = .aspectFill
         scene.screen.use(scene: scene)
