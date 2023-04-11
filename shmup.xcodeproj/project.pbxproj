@@ -10,16 +10,12 @@
 		97142B4829E22DC300069E6F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97142B4729E22DC300069E6F /* AppDelegate.swift */; };
 		97142B4A29E22DC300069E6F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97142B4929E22DC300069E6F /* GameViewController.swift */; };
 		97142B4D29E22DC300069E6F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97142B4B29E22DC300069E6F /* Main.storyboard */; };
-		97142B4F29E22DC300069E6F /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 97142B3C29E22DC200069E6F /* Actions.sks */; };
-		97142B5029E22DC300069E6F /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 97142B3D29E22DC200069E6F /* GameScene.sks */; };
 		97142B5129E22DC300069E6F /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97142B3E29E22DC200069E6F /* GameScene.swift */; };
 		97142B5229E22DC300069E6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97142B3F29E22DC300069E6F /* Assets.xcassets */; };
 		9715FBCC29E577D000C53D13 /* laser.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9715FBCB29E577D000C53D13 /* laser.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		97142B3C29E22DC200069E6F /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
-		97142B3D29E22DC200069E6F /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		97142B3E29E22DC200069E6F /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		97142B3F29E22DC300069E6F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97142B4429E22DC300069E6F /* shmup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = shmup.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -54,8 +50,6 @@
 			isa = PBXGroup;
 			children = (
 				9715FBCD29E577D600C53D13 /* sounds */,
-				97142B3C29E22DC200069E6F /* Actions.sks */,
-				97142B3D29E22DC200069E6F /* GameScene.sks */,
 				97142B3E29E22DC200069E6F /* GameScene.swift */,
 				97142B3F29E22DC300069E6F /* Assets.xcassets */,
 			);
@@ -149,9 +143,7 @@
 			files = (
 				97142B4D29E22DC300069E6F /* Main.storyboard in Resources */,
 				9715FBCC29E577D000C53D13 /* laser.wav in Resources */,
-				97142B5029E22DC300069E6F /* GameScene.sks in Resources */,
 				97142B5229E22DC300069E6F /* Assets.xcassets in Resources */,
-				97142B4F29E22DC300069E6F /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

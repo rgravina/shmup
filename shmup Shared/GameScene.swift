@@ -233,11 +233,8 @@ class GameScene: SKScene {
     private var screen: Screen = Screen()
 
     class func newGameScene() -> GameScene {
-        guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
-            print("Failed to load GameScene.sks")
-            abort()
-        }
-
+        let scene = GameScene(size: CGSize(width: 1024, height: 1024))
+        scene.anchorPoint = .init(x: 0.5, y: 0.5)
         scene.scaleMode = .aspectFill
         scene.screen.use(scene: scene)
         return scene
