@@ -185,7 +185,7 @@ class Player {
             return
         }
         flashSprite += 1
-        if flashSprite > 4 {
+        if flashSprite > 3 {
             flashSprite = 0
             flash.isHidden = true
         }
