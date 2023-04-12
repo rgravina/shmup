@@ -105,6 +105,38 @@ struct Sound {
     static let laser = SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false)
 }
 
+struct Lives {
+    private(set) var coordinate: Coordinate = Coordinate(x: 4, y: 4)
+    private(set) var node: SKNode!
+    static let zPosition: CGFloat = 1
+    static let total = 4
+    let lives = 1
+
+    init() {
+        node = SKNode()
+        node.position = coordinate.toPosition()
+        drawLives()
+    }
+
+    private func drawLives() {
+        for index in 0..<Lives.total {
+            let lifeAvailable = SKSpriteNode(imageNamed: "life_0")
+            lifeAvailable.zPosition = Lives.zPosition
+            let lifeUnavailable = SKSpriteNode(imageNamed: "life_1")
+            lifeUnavailable.zPosition = Lives.zPosition
+            if index < lives {
+                Screen.setup(sprite: lifeAvailable)
+                lifeAvailable.position = CGPoint(x: index * (Sprite.size + 1), y: 0)
+                node.addChild(lifeAvailable)
+            } else {
+                Screen.setup(sprite: lifeUnavailable)
+                lifeUnavailable.position = CGPoint(x: index * (Sprite.size + 1), y: 0)
+                node.addChild(lifeUnavailable)
+            }
+        }
+    }
+}
+
 class Player {
     private(set) var coordinate: Coordinate = Coordinate(x: Screen.size/2, y: Screen.size/2)
     private(set) var direction: Direction = .none
@@ -219,6 +251,7 @@ class GameScene: SKScene {
     private var player: Player!
     private var plasma: PlasmaBall?
     private var screen: Screen = Screen()
+    private var lives: Lives = Lives()
 
     class func newGameScene() -> GameScene {
         let scene = GameScene(size: CGSize(width: Screen.size, height: Screen.size))
@@ -232,6 +265,7 @@ class GameScene: SKScene {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player()
         addChild(player.node)
+        addChild(lives.node)
     }
 
     override func didMove(to view: SKView) {
