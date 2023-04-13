@@ -101,8 +101,12 @@ struct Sprite {
     static let size = 8
 }
 
-struct Sound {
-    static let laser = SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false)
+struct SoundPlayer {
+    let laser: SKAction
+
+    init() {
+        laser = SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false)
+    }
 }
 
 struct Lives {
@@ -141,13 +145,15 @@ class Player {
     private(set) var coordinate: Coordinate = Coordinate(x: Screen.size/2, y: Screen.size/2)
     private(set) var direction: Direction = .none
     private(set) var node: SKNode!
+    private var soundPlayer: SoundPlayer
     private var ship: SKSpriteNode!
     private var flame: SKSpriteNode!
     private var flash: SKSpriteNode!
     private var flameSprite: Int = 0
     private var flashSprite: Int = 0
 
-    init() {
+    init(soundPlayer: SoundPlayer) {
+        self.soundPlayer = soundPlayer
         node = SKNode()
         node.position = coordinate.toPosition()
         ship = SKSpriteNode(imageNamed: "ship_0")
@@ -185,7 +191,7 @@ class Player {
 
     func fire() -> PlasmaBall {
         flash.isHidden = false
-        node.run(Sound.laser)
+        node.run(soundPlayer.laser)
         return PlasmaBall(coordinate: coordinate)
     }
 
@@ -250,8 +256,9 @@ class PlasmaBall {
 class GameScene: SKScene {
     private var player: Player!
     private var plasma: PlasmaBall?
-    private var screen: Screen = Screen()
-    private var lives: Lives = Lives()
+    private var screen = Screen()
+    private var lives = Lives()
+    private var soundPlayer = SoundPlayer()
 
     class func newGameScene() -> GameScene {
         let scene = GameScene(size: CGSize(width: Screen.size, height: Screen.size))
@@ -263,7 +270,7 @@ class GameScene: SKScene {
 
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
-        player = Player()
+        player = Player(soundPlayer: soundPlayer)
         addChild(player.node)
         addChild(lives.node)
     }
