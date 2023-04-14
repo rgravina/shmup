@@ -160,6 +160,7 @@ class Player {
     init(soundPlayer: SoundPlayer) {
         self.soundPlayer = soundPlayer
         node = SKNode()
+        node.zPosition = Layers.sprites.rawValue
         node.position = coordinate.toPosition()
         ship = SKSpriteNode(imageNamed: "ship_0")
         flame = SKSpriteNode(imageNamed: "flame_0")
@@ -238,6 +239,7 @@ class PlasmaBall {
     init(coordinate: Coordinate) {
         self.coordinate = coordinate
         node = SKNode()
+        node.zPosition = Layers.sprites.rawValue
         ball = SKSpriteNode(imageNamed: "fire")
         Screen.setup(sprite: ball)
         node.addChild(ball)
