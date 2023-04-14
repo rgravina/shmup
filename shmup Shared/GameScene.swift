@@ -101,6 +101,10 @@ class Screen {
         sprite.anchorPoint = CGPoint(x: 0, y: 1.0)
         sprite.texture?.filteringMode = .nearest
     }
+
+    static func randomPoint() -> CGPoint {
+        return .init(x: Int.random(in: 0..<Screen.size), y: Int.random(in: 0..<Screen.size))
+    }
 }
 
 struct Sprite {
@@ -261,6 +265,9 @@ class PlasmaBall {
 }
 
 struct StarField {
+    private static let slowStarSpeed = 0..<0.5
+    private static let normalStarSpeed = 0.5..<1.5
+    private static let starSpeeds = 0..<2.0
     private static let totalStars = 100
     private(set) var node: SKNode!
     private var stars = [SKSpriteNode]()
@@ -270,16 +277,16 @@ struct StarField {
         node.zPosition = Layers.background.rawValue
         for _ in 0..<StarField.totalStars {
             let star: SKSpriteNode
-            let speed = CGFloat(Double.random(in: 0..<2))
+            let speed = CGFloat(Double.random(in: StarField.starSpeeds))
             switch(speed) {
-            case 0..<0.5:
+            case StarField.slowStarSpeed:
                 star = SKSpriteNode(imageNamed: "star_2")
-            case 0.5..<1.5:
+            case StarField.normalStarSpeed:
                 star = SKSpriteNode(imageNamed: "star_1")
             default:
                 star = SKSpriteNode(imageNamed: "star_0")
             }
-            star.position = .init(x: Int.random(in: 0..<Screen.size), y: Int.random(in: 0..<Screen.size))
+            star.position = Screen.randomPoint()
             star.speed = speed
             stars.append(star)
             node.addChild(star)
@@ -288,8 +295,12 @@ struct StarField {
 
     func update() {
         for star in stars {
-            let newY = star.position.y < 0 ? CGFloat(Screen.size) : star.position.y-star.speed
-            star.position = CGPoint(x: star.position.x, y: newY)
+            star.position = CGPoint(
+                x: star.position.x,
+                y: star.position.y < 0 ?
+                    CGFloat(Screen.size) :
+                    star.position.y-star.speed
+            )
         }
     }
 }
