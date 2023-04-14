@@ -28,6 +28,12 @@ enum KeyCodes: UInt16 {
     }
 }
 
+enum Layers: CGFloat {
+    case background = -1.0
+    case sprites = 0.0
+    case interface = 1.0
+}
+
 struct Coordinate {
     var x: Int
     var y: Int
@@ -112,7 +118,6 @@ struct SoundPlayer {
 struct Lives {
     private(set) var coordinate: Coordinate = Coordinate(x: 4, y: 4)
     private(set) var node: SKNode!
-    static let zPosition: CGFloat = 1
     static let total = 4
     let lives = 1
 
@@ -125,9 +130,9 @@ struct Lives {
     private func drawLives() {
         for index in 0..<Lives.total {
             let lifeAvailable = SKSpriteNode(imageNamed: "life_0")
-            lifeAvailable.zPosition = Lives.zPosition
+            lifeAvailable.zPosition = Layers.interface.rawValue
             let lifeUnavailable = SKSpriteNode(imageNamed: "life_1")
-            lifeUnavailable.zPosition = Lives.zPosition
+            lifeUnavailable.zPosition = Layers.interface.rawValue
             if index < lives {
                 Screen.setup(sprite: lifeAvailable)
                 lifeAvailable.position = CGPoint(x: index * (Sprite.size + 1), y: 0)
@@ -253,12 +258,27 @@ class PlasmaBall {
     }
 }
 
+struct StarField {
+    private static let totalStars = 100
+    private(set) var node: SKNode!
+
+    init() {
+        node = SKScene(size: .init(width: Screen.size, height: Screen.size))
+        node.zPosition = Layers.background.rawValue
+        for _ in 0..<StarField.totalStars {
+            let star = SKSpriteNode(imageNamed: "star")
+            star.position = .init(x: Int.random(in: 0..<Screen.size), y: Int.random(in: 0..<Screen.size))
+            node.addChild(star)
+        }
+    }
+}
 class GameScene: SKScene {
     private var player: Player!
     private var plasma: PlasmaBall?
     private var screen = Screen()
     private var lives = Lives()
     private var soundPlayer = SoundPlayer()
+    private var starField = StarField()
 
     class func newGameScene() -> GameScene {
         let scene = GameScene(size: CGSize(width: Screen.size, height: Screen.size))
@@ -271,8 +291,10 @@ class GameScene: SKScene {
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player(soundPlayer: soundPlayer)
+        starField = StarField()
         addChild(player.node)
         addChild(lives.node)
+        addChild(starField.node)
     }
 
     override func didMove(to view: SKView) {
