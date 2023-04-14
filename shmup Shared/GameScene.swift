@@ -261,17 +261,37 @@ class PlasmaBall {
 struct StarField {
     private static let totalStars = 100
     private(set) var node: SKNode!
+    private var stars = [SKSpriteNode]()
 
     init() {
         node = SKScene(size: .init(width: Screen.size, height: Screen.size))
         node.zPosition = Layers.background.rawValue
         for _ in 0..<StarField.totalStars {
-            let star = SKSpriteNode(imageNamed: "star")
+            let star: SKSpriteNode
+            let speed = CGFloat(Double.random(in: 0..<2))
+            switch(speed) {
+            case 0..<0.5:
+                star = SKSpriteNode(imageNamed: "star_2")
+            case 0.5..<1.5:
+                star = SKSpriteNode(imageNamed: "star_1")
+            default:
+                star = SKSpriteNode(imageNamed: "star_0")
+            }
             star.position = .init(x: Int.random(in: 0..<Screen.size), y: Int.random(in: 0..<Screen.size))
+            star.speed = speed
+            stars.append(star)
             node.addChild(star)
         }
     }
+
+    func update() {
+        for star in stars {
+            let newY = star.position.y < 0 ? CGFloat(Screen.size) : star.position.y-star.speed
+            star.position = CGPoint(x: star.position.x, y: newY)
+        }
+    }
 }
+
 class GameScene: SKScene {
     private var player: Player!
     private var plasma: PlasmaBall?
@@ -310,6 +330,7 @@ class GameScene: SKScene {
                 self.plasma = nil
             }
         }
+        starField.update()
     }
 
     override func keyUp(with event: NSEvent) {
