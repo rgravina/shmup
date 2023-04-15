@@ -122,12 +122,13 @@ struct SoundPlayer {
 }
 
 struct Color {
-    static let lightBlue = NSColor(red: 0.16, green: 0.68, blue: 1.00, alpha: 1.00)
-    static let darkBlue = NSColor(red: 0.11, green: 0.17, blue: 0.33, alpha: 1.00)
-    static let lightGrey = NSColor(red: 0.76, green: 0.76, blue: 0.78, alpha: 1.00)
-    static let darkGrey = NSColor(red: 0.37, green: 0.34, blue: 0.31, alpha: 1.00)
-    static let black = NSColor(red: 0, green: 0, blue: 0, alpha: 1.00)
-    static let white = NSColor(red: 1, green: 1, blue: 1, alpha: 1.00)
+    static let lightBlue = NSColor(red: 0.16, green: 0.68, blue: 1, alpha: 1)
+    static let darkBlue = NSColor(red: 0.11, green: 0.17, blue: 0.33, alpha: 1)
+    static let lightGrey = NSColor(red: 0.76, green: 0.76, blue: 0.78, alpha: 1)
+    static let darkGrey = NSColor(red: 0.37, green: 0.34, blue: 0.31, alpha: 1)
+    static let black = NSColor(red: 0, green: 0, blue: 0, alpha: 1)
+    static let white = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
+    static let red = NSColor(red: 1, green: 0, blue: 0.30, alpha: 1)
 }
 
 struct Text {

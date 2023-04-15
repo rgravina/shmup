@@ -28,12 +28,8 @@ class Enemy {
 class Enemies {
     private(set) var node: SKNode!
     private var enemies = [Enemy]()
-    private var lives: Lives
-    private let soundPlayer: SoundPlayer
 
-    init(lives: Lives, soundPlayer: SoundPlayer) {
-        self.lives = lives
-        self.soundPlayer = soundPlayer
+    init() {
         node = SKNode()
         node.zPosition = Layers.sprites.rawValue
         let enemy = Enemy(coordinate: Coordinate(x: Screen.size/2, y: Sprite.size))
@@ -41,7 +37,7 @@ class Enemies {
         node.addChild(enemy.node)
     }
 
-    func update(player: Player) {
+    func update(player: Player, onCollision: () -> Void) {
         for (index, enemy) in enemies.enumerated().reversed() {
             enemy.move()
             if enemy.coordinate.y > Screen.size {
@@ -50,10 +46,9 @@ class Enemies {
                 break
             }
             if Collision.collides(a: player.node, b: enemy.node) {
-                lives.substractLife()
-                node.run(soundPlayer.collision)
                 enemy.remove()
                 enemies.remove(at: index)
+                onCollision()
                 break
             }
         }

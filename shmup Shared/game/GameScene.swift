@@ -3,7 +3,7 @@ import SpriteKit
 class GameScene: SKScene {
     private var player: Player!
     private var plasmaBalls = PlasmaBalls()
-    private var enemies: Enemies!
+    private var enemies = Enemies()
     private var screen = Screen()
     private var lives = Lives()
     private var score = Score()
@@ -22,7 +22,6 @@ class GameScene: SKScene {
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player(soundPlayer: soundPlayer)
-        enemies = Enemies(lives: lives, soundPlayer: soundPlayer)
         addChild(enemies.node)
         addChild(player.node)
         addChild(lives.node)
@@ -37,7 +36,17 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         player.update()
         plasmaBalls.update()
-        enemies.update(player: player)
+        enemies.update(player: player) { [self] in
+            lives.substractLife()
+            run(soundPlayer.collision)
+            if lives.lives == 0, let skView = view {
+                let scene = GameOverScene.newGameScene()
+                skView.presentScene(scene)
+                skView.ignoresSiblingOrder = true
+                skView.showsFPS = true
+                skView.showsNodeCount = true
+            }
+        }
         starField.update()
     }
 
