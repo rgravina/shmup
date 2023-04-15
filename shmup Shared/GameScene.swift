@@ -315,6 +315,7 @@ class Star {
         }
         node.position = coordinate.toPosition()
         node.speed = self.speed
+        node.zPosition = Layers.background.rawValue
     }
 
     func update() {
@@ -365,7 +366,6 @@ class GameScene: SKScene {
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player(soundPlayer: soundPlayer)
-        starField = StarField()
         addChild(player.node)
         addChild(lives.node)
         addChild(score.node)
