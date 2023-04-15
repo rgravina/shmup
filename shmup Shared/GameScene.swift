@@ -152,6 +152,7 @@ struct Lives {
 
 struct Color {
     static let lightBlue = NSColor(red: 0.16, green: 0.68, blue: 1.00, alpha: 1.00)
+    static let lightGrey = NSColor(red: 0.76, green: 0.76, blue: 0.78, alpha: 1.00)
 }
 
 struct Score {
@@ -300,11 +301,10 @@ struct StarField {
 
     init() {
         node = SKScene(size: .init(width: Screen.size, height: Screen.size))
-        node.zPosition = Layers.background.rawValue
         for _ in 0..<StarField.totalStars {
             let star: SKSpriteNode
             let speed = CGFloat(Double.random(in: StarField.starSpeeds))
-            switch(speed) {
+            switch speed {
             case StarField.slowStarSpeed:
                 star = SKSpriteNode(imageNamed: "star_2")
             case StarField.normalStarSpeed:
