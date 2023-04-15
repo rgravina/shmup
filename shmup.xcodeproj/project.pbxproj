@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		97026B3929EA2A3800665E39 /* PICO-8.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 97026B3829EA292F00665E39 /* PICO-8.ttf */; };
 		97142B4829E22DC300069E6F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97142B4729E22DC300069E6F /* AppDelegate.swift */; };
 		97142B4A29E22DC300069E6F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97142B4929E22DC300069E6F /* GameViewController.swift */; };
 		97142B4D29E22DC300069E6F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97142B4B29E22DC300069E6F /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		97026B3829EA292F00665E39 /* PICO-8.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PICO-8.ttf"; sourceTree = "<group>"; };
 		97142B3E29E22DC200069E6F /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		97142B3F29E22DC300069E6F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97142B4429E22DC300069E6F /* shmup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = shmup.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -37,6 +39,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		97026B3729EA291E00665E39 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				97026B3829EA292F00665E39 /* PICO-8.ttf */,
+			);
+			path = fonts;
+			sourceTree = "<group>";
+		};
 		97142B3629E22DC200069E6F = {
 			isa = PBXGroup;
 			children = (
@@ -49,6 +59,7 @@
 		97142B3B29E22DC200069E6F /* shmup Shared */ = {
 			isa = PBXGroup;
 			children = (
+				97026B3729EA291E00665E39 /* fonts */,
 				9715FBCD29E577D600C53D13 /* sounds */,
 				97142B3E29E22DC200069E6F /* GameScene.swift */,
 				97142B3F29E22DC300069E6F /* Assets.xcassets */,
@@ -143,6 +154,7 @@
 			files = (
 				97142B4D29E22DC300069E6F /* Main.storyboard in Resources */,
 				9715FBCC29E577D000C53D13 /* laser.wav in Resources */,
+				97026B3929EA2A3800665E39 /* PICO-8.ttf in Resources */,
 				97142B5229E22DC300069E6F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

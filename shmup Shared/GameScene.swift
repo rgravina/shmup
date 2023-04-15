@@ -150,6 +150,31 @@ struct Lives {
     }
 }
 
+struct Color {
+    static let lightBlue = NSColor(red: 0.16, green: 0.68, blue: 1.00, alpha: 1.00)
+}
+
+struct Score {
+    private var score = 0
+    private(set) var coordinate: Coordinate = Coordinate(x: 64, y: 11)
+    private(set) var node: SKNode!
+
+    init() {
+        node = SKNode()
+        node.position = coordinate.toPosition()
+        node.zPosition = Layers.interface.rawValue
+        drawScore()
+    }
+
+    private func drawScore() {
+        let display = SKLabelNode(fontNamed: "PICO-8")
+        display.fontSize = 6
+        display.fontColor = Color.lightBlue
+        display.text = "score: \(score)"
+        node.addChild(display)
+    }
+}
+
 class Player {
     private(set) var coordinate: Coordinate = Coordinate(x: Screen.size/2, y: Screen.size/2)
     private(set) var direction: Direction = .none
@@ -245,6 +270,7 @@ class PlasmaBall {
         node = SKNode()
         node.zPosition = Layers.sprites.rawValue
         ball = SKSpriteNode(imageNamed: "fire")
+
         Screen.setup(sprite: ball)
         node.addChild(ball)
         move()
@@ -310,6 +336,7 @@ class GameScene: SKScene {
     private var plasma: PlasmaBall?
     private var screen = Screen()
     private var lives = Lives()
+    private var score = Score()
     private var soundPlayer = SoundPlayer()
     private var starField = StarField()
 
@@ -327,6 +354,7 @@ class GameScene: SKScene {
         starField = StarField()
         addChild(player.node)
         addChild(lives.node)
+        addChild(score.node)
         addChild(starField.node)
     }
 
