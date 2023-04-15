@@ -1,54 +1,5 @@
 import SpriteKit
 
-struct Text {
-    private(set) var node: SKNode!
-    private var blinkColors = [
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.darkGrey,
-        Color.lightGrey,
-        Color.lightGrey,
-        Color.white,
-        Color.white,
-        Color.lightGrey,
-        Color.lightGrey
-    ]
-    private let display = SKLabelNode(fontNamed: "PICO-8")
-    var blinkIndex = 0
-    var text: String
-    var color: NSColor
-
-    init(text: String, color: NSColor, coordinate: Coordinate) {
-        self.text = text
-        self.color = color
-        node = SKNode()
-        node.position = coordinate.toPosition()
-        node.zPosition = Layers.interface.rawValue
-        drawText()
-    }
-
-    mutating func blink() {
-        blinkIndex = blinkIndex >= blinkColors.count - 1 ? 0 : blinkIndex + 1
-        display.fontColor = blinkColors[blinkIndex]
-    }
-
-    private func drawText() {
-        display.fontSize = 6
-        display.fontColor = self.color
-        display.text = text
-        node.addChild(display)
-    }
-}
-
 class StartScene: SKScene {
     private var screen = Screen()
     private var pressKey: Text!
