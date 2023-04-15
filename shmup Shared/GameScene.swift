@@ -120,7 +120,7 @@ struct SoundPlayer {
 }
 
 struct Lives {
-    private(set) var coordinate: Coordinate = Coordinate(x: 4, y: 4)
+    private(set) var coordinate: Coordinate = Coordinate(x: 2, y: 2)
     private(set) var node: SKNode!
     static let total = 4
     let lives = 1
@@ -160,8 +160,8 @@ struct Color {
 }
 
 struct Score {
-    private var score = 0
-    private(set) var coordinate: Coordinate = Coordinate(x: 64, y: 11)
+    private var score = 10000
+    private(set) var coordinate: Coordinate = Coordinate(x: 64, y: 9)
     private(set) var node: SKNode!
 
     init() {
@@ -175,7 +175,7 @@ struct Score {
         let display = SKLabelNode(fontNamed: "PICO-8")
         display.fontSize = 6
         display.fontColor = Color.lightBlue
-        display.text = "score: \(score)"
+        display.text = "score:\(score)"
         node.addChild(display)
     }
 }
@@ -346,7 +346,7 @@ struct StarField {
 
 class GameScene: SKScene {
     private var player: Player!
-    private var plasma: PlasmaBall?
+    private var plasmaBalls = [PlasmaBall]()
     private var screen = Screen()
     private var lives = Lives()
     private var score = Score()
@@ -378,12 +378,13 @@ class GameScene: SKScene {
 
     override func update(_ currentTime: TimeInterval) {
         player.update()
-        if let plasma = plasma {
-            plasma.update()
-            if plasma.coordinate.y < Screen.origin.y {
-                plasma.remove()
-                self.plasma = nil
+        for (index, plasmaBall) in plasmaBalls.enumerated() {
+            plasmaBall.update()
+            if plasmaBall.coordinate.y < Screen.origin.y - Sprite.size {
+                plasmaBall.remove()
+                plasmaBalls.remove(at: index)
             }
+
         }
         starField.update()
     }
@@ -401,9 +402,10 @@ class GameScene: SKScene {
         if direction != .none {
             player.point(direction: direction)
         }
-        if keyCode == KeyCodes.zKey && plasma == nil {
-            plasma = player.fire()
-            addChild(plasma!.node)
+        if keyCode == KeyCodes.zKey {
+            let plasma = player.fire()
+            self.plasmaBalls.append(plasma)
+            addChild(plasma.node)
         }
     }
 }
