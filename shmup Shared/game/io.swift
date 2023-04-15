@@ -60,18 +60,18 @@ struct Coordinate {
         }
     }
 
-    func wrapIfNeeded() -> Coordinate {
+    func contain() -> Coordinate {
         if x < Screen.origin.x {
-            return moveXEnd()
-        }
-        if x > Screen.edge.x {
             return moveXStart()
         }
+        if x > Screen.edge.x {
+            return moveXEnd()
+        }
         if y < Screen.origin.y {
-            return moveYEnd()
+            return moveYStart()
         }
         if y > Screen.edge.y {
-            return moveYStart()
+            return moveYEnd()
         }
         return self
     }

@@ -58,7 +58,7 @@ class Player {
     private func move() {
         coordinate = coordinate
             .move(direction: direction)
-            .wrapIfNeeded()
+            .contain()
         node.position = coordinate.toPosition()
     }
 
