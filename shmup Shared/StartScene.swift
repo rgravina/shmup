@@ -2,6 +2,28 @@ import SpriteKit
 
 struct Text {
     private(set) var node: SKNode!
+    private var blinkColors = [
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.darkGrey,
+        Color.lightGrey,
+        Color.lightGrey,
+        Color.white,
+        Color.white,
+        Color.lightGrey,
+        Color.lightGrey
+    ]
+    private let display = SKLabelNode(fontNamed: "PICO-8")
+    var blinkIndex = 0
     var text: String
     var color: NSColor
 
@@ -14,8 +36,12 @@ struct Text {
         drawText()
     }
 
+    mutating func blink() {
+        blinkIndex = blinkIndex >= blinkColors.count - 1 ? 0 : blinkIndex + 1
+        display.fontColor = blinkColors[blinkIndex]
+    }
+
     private func drawText() {
-        let display = SKLabelNode(fontNamed: "PICO-8")
         display.fontSize = 6
         display.fontColor = self.color
         display.text = text
@@ -25,12 +51,14 @@ struct Text {
 
 class StartScene: SKScene {
     private var screen = Screen()
+    private var pressKey: Text!
 
     class func newGameScene() -> StartScene {
         let scene = StartScene(size: CGSize(width: Screen.size, height: Screen.size))
         scene.anchorPoint = .init(x: 0, y: 0)
         scene.scaleMode = .aspectFill
         scene.screen.use(scene: scene)
+        scene.backgroundColor = Color.black
         return scene
     }
 
@@ -51,7 +79,7 @@ class StartScene: SKScene {
             color: Color.lightBlue,
             coordinate: Coordinate(x: 64, y: 48)
         )
-        let pressKey = Text(
+        pressKey = Text(
             text: "press O to start",
             color: Color.lightGrey,
             coordinate: Coordinate(x: 64, y: 96)
@@ -67,6 +95,7 @@ class StartScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
+        pressKey.blink()
     }
 
     override func keyDown(with event: NSEvent) {

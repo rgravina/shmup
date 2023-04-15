@@ -102,8 +102,8 @@ class Screen {
         sprite.texture?.filteringMode = .nearest
     }
 
-    static func randomPoint() -> CGPoint {
-        return .init(x: Int.random(in: 0..<Screen.size), y: Int.random(in: 0..<Screen.size))
+    static func randomCoordinate() -> Coordinate {
+        return Coordinate(x: Int.random(in: 0..<Screen.size), y: Int.random(in: 0..<Screen.size))
     }
 }
 
@@ -152,7 +152,11 @@ struct Lives {
 
 struct Color {
     static let lightBlue = NSColor(red: 0.16, green: 0.68, blue: 1.00, alpha: 1.00)
+    static let darkBlue = NSColor(red: 0.11, green: 0.17, blue: 0.33, alpha: 1.00)
     static let lightGrey = NSColor(red: 0.76, green: 0.76, blue: 0.78, alpha: 1.00)
+    static let darkGrey = NSColor(red: 0.37, green: 0.34, blue: 0.31, alpha: 1.00)
+    static let black = NSColor(red: 0, green: 0, blue: 0, alpha: 1.00)
+    static let white = NSColor(red: 1, green: 1, blue: 1, alpha: 1.00)
 }
 
 struct Score {
@@ -291,43 +295,52 @@ class PlasmaBall {
     }
 }
 
+class Star {
+    private static let slowStarSpeed: Double = 0.5
+    private static let normalStarSpeed: Double = 1.5
+    private static let fastStarSpeed: Double = 2.5
+    static let starSpeeds = slowStarSpeed...fastStarSpeed
+    private(set) var node: SKSpriteNode!
+    var speed: Double
+
+    init(coordinate: Coordinate, speed: Double) {
+        self.speed = speed
+        switch speed {
+        case 0..<Star.slowStarSpeed:
+            node = SKSpriteNode(imageNamed: "star_2")
+        case Star.slowStarSpeed..<Star.normalStarSpeed:
+            node = SKSpriteNode(imageNamed: "star_1")
+        default:
+            node = SKSpriteNode(imageNamed: "star_0")
+        }
+        node.position = coordinate.toPosition()
+        node.speed = self.speed
+    }
+
+    func update() {
+        node.position.y = node.position.y < 0 ? CGFloat(Screen.size) : node.position.y - speed
+    }
+}
+
 struct StarField {
-    private static let slowStarSpeed = 0..<0.5
-    private static let normalStarSpeed = 0.5..<1.5
-    private static let starSpeeds = 0..<2.0
     private static let totalStars = 100
     private(set) var node: SKNode!
-    private var stars = [SKSpriteNode]()
+    private var stars = [Star]()
 
     init() {
         node = SKScene(size: .init(width: Screen.size, height: Screen.size))
         for _ in 0..<StarField.totalStars {
-            let star: SKSpriteNode
-            let speed = CGFloat(Double.random(in: StarField.starSpeeds))
-            switch speed {
-            case StarField.slowStarSpeed:
-                star = SKSpriteNode(imageNamed: "star_2")
-            case StarField.normalStarSpeed:
-                star = SKSpriteNode(imageNamed: "star_1")
-            default:
-                star = SKSpriteNode(imageNamed: "star_0")
-            }
-            star.position = Screen.randomPoint()
-            star.speed = speed
+            let star = Star(
+                coordinate: Screen.randomCoordinate(),
+                speed: Double.random(in: Star.starSpeeds)
+            )
             stars.append(star)
-            node.addChild(star)
+            node.addChild(star.node)
         }
     }
 
     func update() {
-        for star in stars {
-            star.position = CGPoint(
-                x: star.position.x,
-                y: star.position.y < 0 ?
-                    CGFloat(Screen.size) :
-                    star.position.y-star.speed
-            )
-        }
+        stars.forEach { $0.update() }
     }
 }
 
@@ -345,6 +358,7 @@ class GameScene: SKScene {
         scene.anchorPoint = .init(x: 0, y: 0)
         scene.scaleMode = .aspectFill
         scene.screen.use(scene: scene)
+        scene.backgroundColor = Color.black
         return scene
     }
 
