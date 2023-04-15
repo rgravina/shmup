@@ -114,3 +114,21 @@ class PlasmaBall {
         node.position = coordinate.toPosition()
     }
 }
+
+class PlasmaBalls {
+    private var plasmaBalls = [PlasmaBall]()
+
+    func append(_ plasmaBall: PlasmaBall) {
+        plasmaBalls.append(plasmaBall)
+    }
+
+    func update() {
+        for (index, plasmaBall) in plasmaBalls.enumerated().reversed() {
+            plasmaBall.update()
+            if plasmaBall.coordinate.y < Screen.origin.y - Sprite.size {
+                plasmaBall.remove()
+                plasmaBalls.remove(at: index)
+            }
+        }
+    }
+}

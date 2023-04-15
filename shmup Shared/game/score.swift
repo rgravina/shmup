@@ -4,11 +4,17 @@ struct Lives {
     private(set) var coordinate: Coordinate = Coordinate(x: 2, y: 2)
     private(set) var node: SKNode!
     static let total = 4
-    let lives = 1
+    var lives = 1
 
     init() {
         node = SKNode()
         node.position = coordinate.toPosition()
+        drawLives()
+    }
+
+    mutating func substractLife() {
+        lives -= 1
+        node.removeAllChildren()
         drawLives()
     }
 
