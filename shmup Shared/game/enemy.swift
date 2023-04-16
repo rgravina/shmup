@@ -32,12 +32,24 @@ class Enemies {
     init() {
         node = SKNode()
         node.zPosition = Layers.sprites.rawValue
-        let enemy = Enemy(coordinate: Coordinate(x: Screen.size/2, y: Sprite.size))
-        enemies.append(enemy)
-        node.addChild(enemy.node)
+        createEnemy()
+    }
+
+    func collides(node: SKNode, onCollision: () -> Void) {
+        for (index, enemy) in enemies.enumerated().reversed() {
+            if Collision.collides(a: node, b: enemy.node) {
+                enemy.remove()
+                enemies.remove(at: index)
+                onCollision()
+                break
+            }
+        }
     }
 
     func update(player: Player, onCollision: () -> Void) {
+        if enemies.isEmpty {
+            createEnemy()
+        }
         for (index, enemy) in enemies.enumerated().reversed() {
             enemy.move()
             if enemy.coordinate.y > Screen.size {
@@ -52,5 +64,11 @@ class Enemies {
                 break
             }
         }
+    }
+
+    private func createEnemy() {
+        let enemy = Enemy(coordinate: Coordinate(x: Int.random(in: 0..<Screen.size), y: 0))
+        enemies.append(enemy)
+        node.addChild(enemy.node)
     }
 }

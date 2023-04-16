@@ -35,7 +35,9 @@ class GameScene: SKScene {
 
     override func update(_ currentTime: TimeInterval) {
         player.update()
-        plasmaBalls.update()
+        plasmaBalls.update(enemies: enemies) { [self] in
+            run(soundPlayer.enemyHit)
+        }
         enemies.update(player: player) { [self] in
             lives.substractLife()
             run(soundPlayer.collision)

@@ -23,6 +23,7 @@
 		97142B5129E22DC300069E6F /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97142B3E29E22DC200069E6F /* GameScene.swift */; };
 		97142B5229E22DC300069E6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97142B3F29E22DC300069E6F /* Assets.xcassets */; };
 		9715FBCC29E577D000C53D13 /* laser.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9715FBCB29E577D000C53D13 /* laser.wav */; };
+		973222CC29EBC64300B177C5 /* enemyhit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 973222CB29EBC64300B177C5 /* enemyhit.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		97142B4C29E22DC300069E6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		97142B4E29E22DC300069E6F /* shmup_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shmup_macOS.entitlements; sourceTree = "<group>"; };
 		9715FBCB29E577D000C53D13 /* laser.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = laser.wav; sourceTree = "<group>"; };
+		973222CB29EBC64300B177C5 /* enemyhit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = enemyhit.wav; path = ../../../../Downloads/enemyhit.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				97026B4E29EAD1B600665E39 /* collision.wav */,
+				973222CB29EBC64300B177C5 /* enemyhit.wav */,
 				9715FBCB29E577D000C53D13 /* laser.wav */,
 			);
 			path = sounds;
@@ -190,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97142B4D29E22DC300069E6F /* Main.storyboard in Resources */,
+				973222CC29EBC64300B177C5 /* enemyhit.wav in Resources */,
 				9715FBCC29E577D000C53D13 /* laser.wav in Resources */,
 				97026B3929EA2A3800665E39 /* PICO-8.ttf in Resources */,
 				97142B5229E22DC300069E6F /* Assets.xcassets in Resources */,

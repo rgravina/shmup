@@ -122,12 +122,17 @@ class PlasmaBalls {
         plasmaBalls.append(plasmaBall)
     }
 
-    func update() {
+    func update(enemies: Enemies, onCollision: () -> Void) {
         for (index, plasmaBall) in plasmaBalls.enumerated().reversed() {
             plasmaBall.update()
             if plasmaBall.coordinate.y < Screen.origin.y - Sprite.size {
                 plasmaBall.remove()
                 plasmaBalls.remove(at: index)
+            }
+            enemies.collides(node: plasmaBall.node) {
+                plasmaBall.remove()
+                plasmaBalls.remove(at: index)
+                onCollision()
             }
         }
     }
