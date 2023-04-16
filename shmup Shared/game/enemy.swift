@@ -1,5 +1,13 @@
 import SpriteKit
 
+struct Animation {
+    static let flash = SKAction.sequence([
+        SKAction.colorize(with: Color.black, colorBlendFactor: 1, duration: 0),
+        SKAction.wait(forDuration: 0.2),
+        SKAction.colorize(withColorBlendFactor: 0, duration: 0)
+    ])
+}
+
 class Enemy {
     private(set) var coordinate: Coordinate
     private(set) var node: SKSpriteNode!
@@ -15,6 +23,7 @@ class Enemy {
 
     func hit() {
         hitPoints -= 1
+        node.run(Animation.flash)
     }
 
     func move() {
