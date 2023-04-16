@@ -64,7 +64,6 @@ class Player {
             }
             firingTimer -= 1
         }
-        print(firingTimer)
     }
 
     var shouldFire: Bool {
