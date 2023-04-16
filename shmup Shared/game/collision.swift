@@ -1,6 +1,7 @@
 import SpriteKit
 
 struct Box {
+    static let padding: CGFloat = 2
     let left: CGFloat
     let right: CGFloat
     let top: CGFloat
@@ -18,10 +19,10 @@ struct Collision {
     }
 
     private static func box(_ point: CGPoint) -> Box {
-        return Box(left: point.x,
-                   right: point.x + CGFloat(Sprite.size),
-                   top: point.y,
-                   bottom: point.y - CGFloat(Sprite.size)
+        return Box(left: point.x + Box.padding,
+                   right: point.x + (CGFloat(Sprite.size) - Box.padding),
+                   top: point.y - Box.padding,
+                   bottom: point.y - (CGFloat(Sprite.size) + Box.padding)
         )
     }
 }
