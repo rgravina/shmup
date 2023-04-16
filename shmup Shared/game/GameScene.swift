@@ -22,11 +22,12 @@ class GameScene: SKScene {
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player(soundPlayer: soundPlayer)
-        addChild(enemies.node)
+        addChild(starField.node)
         addChild(player.node)
+        addChild(plasmaBalls.node)
+        addChild(enemies.node)
         addChild(lives.node)
         addChild(score.node)
-        addChild(starField.node)
     }
 
     override func didMove(to view: SKView) {
@@ -34,10 +35,11 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        player.update()
-        plasmaBalls.update(enemies: enemies) { [self] in
+        plasmaBalls.update(player: player, enemies: enemies) { [self] in
             run(soundPlayer.enemyHit)
+            score.increment()
         }
+        player.update()
         enemies.update(player: player) { [self] in
             lives.substractLife()
             player.hit()
@@ -50,6 +52,7 @@ class GameScene: SKScene {
                 skView.showsNodeCount = true
             }
         }
+        score.update()
         starField.update()
     }
 
@@ -57,6 +60,9 @@ class GameScene: SKScene {
         let keyCode = KeyCodes(rawValue: event.keyCode)
         if keyCode?.toDirection() == player.direction {
             player.point(direction: .none)
+        }
+        if keyCode == KeyCodes.zKey {
+            player.endFiring()
         }
     }
 
@@ -67,9 +73,7 @@ class GameScene: SKScene {
             player.point(direction: direction)
         }
         if keyCode == KeyCodes.zKey {
-            let plasma = player.fire()
-            plasmaBalls.append(plasma)
-            addChild(plasma.node)
+            player.startFiring()
         }
     }
 }

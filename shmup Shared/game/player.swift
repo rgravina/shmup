@@ -12,6 +12,8 @@ class Player {
     private var flameSprite: Int = 0
     private var flashSprite: Int = 0
     private var invulnerability: Int = 0
+    private var firing = false
+    private var firingTimer: Int = 0
 
     init(soundPlayer: SoundPlayer) {
         self.soundPlayer = soundPlayer
@@ -47,15 +49,41 @@ class Player {
 
     func update() {
         decreaseInvulnerability()
+        fire()
         move()
         animateFlame()
         animateFlash()
     }
 
-    func fire() -> PlasmaBall {
-        flash.isHidden = false
-        node.run(soundPlayer.laser)
-        return PlasmaBall(coordinate: coordinate)
+    private func fire() {
+        if firing {
+            if shouldFire {
+                flash.isHidden = false
+                node.run(soundPlayer.laser)
+                firingTimer = 3
+            }
+            firingTimer -= 1
+        }
+        print(firingTimer)
+    }
+
+    var shouldFire: Bool {
+        get {
+            return firing && firingTimer == 0
+        }
+    }
+
+    func startFiring() {
+        guard !firing else {
+            return
+        }
+        firing = true
+        firingTimer = 0
+    }
+
+    func endFiring() {
+        firing = false
+        firingTimer = 0
     }
 
     func hit() {
@@ -136,13 +164,24 @@ class PlasmaBall {
 }
 
 class PlasmaBalls {
+    private(set) var node: SKNode!
     private var plasmaBalls = [PlasmaBall]()
+
+    init() {
+        node = SKScene(size: .init(width: Screen.size, height: Screen.size))
+    }
 
     func append(_ plasmaBall: PlasmaBall) {
         plasmaBalls.append(plasmaBall)
     }
 
-    func update(enemies: Enemies, onCollision: () -> Void) {
+    func update(player: Player, enemies: Enemies, onCollision: () -> Void) {
+        if player.shouldFire {
+            let plasmaBall = PlasmaBall(coordinate: player.coordinate)
+            plasmaBalls.append(plasmaBall)
+            node.addChild(plasmaBall.node)
+        }
+
         for (index, plasmaBall) in plasmaBalls.enumerated().reversed() {
             plasmaBall.update()
             if plasmaBall.coordinate.y < Screen.origin.y - Sprite.size {

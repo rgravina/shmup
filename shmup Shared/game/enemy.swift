@@ -67,7 +67,7 @@ class Enemies {
     }
 
     private func createEnemy() {
-        let enemy = Enemy(coordinate: Coordinate(x: Int.random(in: 0..<Screen.size), y: 0))
+        let enemy = Enemy(coordinate: Coordinate(x: Int.random(in: 0..<Screen.size-Sprite.size), y: 0))
         enemies.append(enemy)
         node.addChild(enemy.node)
     }

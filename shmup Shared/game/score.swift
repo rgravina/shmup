@@ -38,22 +38,27 @@ struct Lives {
 }
 
 struct Score {
-    private var score = 10000
-    private(set) var coordinate: Coordinate = Coordinate(x: 64, y: 9)
+    private var score = 0
+    private(set) var coordinate: Coordinate = Coordinate(x: 42, y: 9)
     private(set) var node: SKNode!
+    private var display: SKLabelNode!
 
     init() {
         node = SKNode()
         node.position = coordinate.toPosition()
         node.zPosition = Layers.interface.rawValue
-        drawScore()
-    }
-
-    private func drawScore() {
-        let display = SKLabelNode(fontNamed: "PICO-8")
+        display = SKLabelNode(fontNamed: "PICO-8")
+        display.horizontalAlignmentMode = .left
         display.fontSize = 6
         display.fontColor = Color.lightBlue
-        display.text = "score:\(score)"
         node.addChild(display)
+    }
+
+    func update() {
+        display.text = "score:\(score)"
+    }
+
+    mutating func increment() {
+        score += 1
     }
 }
