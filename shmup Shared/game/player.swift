@@ -1,4 +1,5 @@
 import SpriteKit
+import Foundation
 
 class Player {
     private(set) var coordinate: Coordinate = Coordinate(x: Screen.size/2, y: Screen.size/2)
@@ -10,6 +11,7 @@ class Player {
     private var flash: SKSpriteNode!
     private var flameSprite: Int = 0
     private var flashSprite: Int = 0
+    private var invulnerability: Int = 0
 
     init(soundPlayer: SoundPlayer) {
         self.soundPlayer = soundPlayer
@@ -44,6 +46,7 @@ class Player {
     }
 
     func update() {
+        decreaseInvulnerability()
         move()
         animateFlame()
         animateFlash()
@@ -53,6 +56,23 @@ class Player {
         flash.isHidden = false
         node.run(soundPlayer.laser)
         return PlasmaBall(coordinate: coordinate)
+    }
+
+    func hit() {
+        invulnerability = Screen.framesPerSecond * 2
+    }
+
+    var isInvunerable: Bool {
+        get {
+            return invulnerability > 0
+        }
+    }
+
+    private func decreaseInvulnerability() {
+        if invulnerability > 0 {
+            invulnerability -= 1
+            node.isHidden = sin(Double(invulnerability)) < 0
+        }
     }
 
     private func move() {

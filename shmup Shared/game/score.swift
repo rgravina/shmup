@@ -4,7 +4,7 @@ struct Lives {
     private(set) var coordinate: Coordinate = Coordinate(x: 2, y: 2)
     private(set) var node: SKNode!
     static let total = 4
-    var lives = 1
+    var lives = 4
 
     init() {
         node = SKNode()

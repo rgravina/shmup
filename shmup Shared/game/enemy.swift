@@ -57,11 +57,11 @@ class Enemies {
                 enemies.remove(at: index)
                 break
             }
-            if Collision.collides(a: player.node, b: enemy.node) {
-                enemy.remove()
-                enemies.remove(at: index)
-                onCollision()
-                break
+            if !player.isInvunerable {
+                if Collision.collides(a: player.node, b: enemy.node) {
+                    onCollision()
+                    break
+                }
             }
         }
     }

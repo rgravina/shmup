@@ -40,6 +40,7 @@ class GameScene: SKScene {
         }
         enemies.update(player: player) { [self] in
             lives.substractLife()
+            player.hit()
             run(soundPlayer.collision)
             if lives.lives == 0, let skView = view {
                 let scene = GameOverScene.newGameScene()
