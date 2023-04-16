@@ -1,10 +1,10 @@
 import SpriteKit
 
 class Star {
-    private static let slowStarSpeed: Double = 0.5
-    private static let normalStarSpeed: Double = 1.5
+    private static let slowStarSpeed: Double = 0.6
+    private static let normalStarSpeed: Double = 1.8
     private static let fastStarSpeed: Double = 2.5
-    static let starSpeeds = slowStarSpeed...fastStarSpeed
+    static let starSpeeds = 0.2...fastStarSpeed
     private(set) var node: SKSpriteNode!
     var speed: Double
 
