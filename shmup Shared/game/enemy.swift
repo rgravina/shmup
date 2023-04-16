@@ -4,12 +4,17 @@ class Enemy {
     private(set) var coordinate: Coordinate
     private(set) var node: SKSpriteNode!
     private var sprite: Double = 0
+    private(set) var hitPoints: Int = 5
 
     init(coordinate: Coordinate) {
         self.coordinate = coordinate
         node = SKSpriteNode(imageNamed: "enemy_\(Int(sprite))")
         Screen.setup(sprite: node)
         node.position = coordinate.toPosition()
+    }
+
+    func hit() {
+        hitPoints -= 1
     }
 
     func move() {
@@ -35,12 +40,17 @@ class Enemies {
         createEnemy()
     }
 
-    func collides(node: SKNode, onCollision: () -> Void) {
+    func collides(node: SKNode, onCollision: (Bool) -> Void) {
         for (index, enemy) in enemies.enumerated().reversed() {
             if Collision.collides(a: node, b: enemy.node) {
-                enemy.remove()
-                enemies.remove(at: index)
-                onCollision()
+                if enemy.hitPoints == 0 {
+                    enemy.remove()
+                    enemies.remove(at: index)
+                    onCollision(true)
+                } else {
+                    enemy.hit()
+                    onCollision(false)
+                }
                 break
             }
         }

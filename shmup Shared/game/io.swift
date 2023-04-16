@@ -115,11 +115,13 @@ struct SoundPlayer {
     let laser: SKAction
     let collision: SKAction
     let enemyHit: SKAction
+    let enemyDestroy: SKAction
 
     init() {
         laser = SKAction.playSoundFileNamed("laser.wav", waitForCompletion: false)
         collision = SKAction.playSoundFileNamed("collision.wav", waitForCompletion: false)
         enemyHit = SKAction.playSoundFileNamed("enemyhit.wav", waitForCompletion: false)
+        enemyDestroy = SKAction.playSoundFileNamed("enemydestroy.wav", waitForCompletion: false)
     }
 }
 

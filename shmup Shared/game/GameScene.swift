@@ -35,9 +35,13 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        plasmaBalls.update(player: player, enemies: enemies) { [self] in
-            run(soundPlayer.enemyHit)
-            score.increment()
+        plasmaBalls.update(player: player, enemies: enemies) { [self] (enemyDestroyed: Bool) in 
+            if enemyDestroyed {
+                run(soundPlayer.enemyDestroy)
+                score.increment()
+            } else {
+                run(soundPlayer.enemyHit)
+            }
         }
         player.update()
         enemies.update(player: player) { [self] in
