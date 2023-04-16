@@ -18,11 +18,11 @@ struct Collision {
                  aBox.bottom > bBox.top)
     }
 
-    private static func box(_ point: CGPoint) -> Box {
-        return Box(left: point.x + Box.padding,
-                   right: point.x + (CGFloat(Sprite.size) - Box.padding),
-                   top: point.y - Box.padding,
-                   bottom: point.y - (CGFloat(Sprite.size) + Box.padding)
+    private static func box(_ position: CGPoint) -> Box {
+        return Box(left: position.x + Box.padding,
+                   right: position.x + (CGFloat(Sprite.size) - Box.padding),
+                   top: position.y - Box.padding,
+                   bottom: position.y - (CGFloat(Sprite.size) - Box.padding)
         )
     }
 }
