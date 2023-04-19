@@ -41,7 +41,10 @@ class GameScene: SKScene {
             if enemyDestroyed {
                 run(soundPlayer.enemyDestroy)
                 score.increment()
-                emitter.emit(coordinate: enemy.coordinate)
+                emitter.emit(
+                    coordinate: enemy.coordinate,
+                    color: ParticleEmitterColor.red
+                )
             } else {
                 run(soundPlayer.enemyHit)
             }
@@ -52,6 +55,10 @@ class GameScene: SKScene {
             lives.substractLife()
             player.hit()
             run(soundPlayer.collision)
+            emitter.emit(
+                coordinate: player.coordinate,
+                color: ParticleEmitterColor.blue
+            )
             if lives.lives == 0, let skView = view {
                 let scene = GameOverScene.newGameScene()
                 skView.presentScene(scene)
