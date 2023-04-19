@@ -9,6 +9,7 @@ class GameScene: SKScene {
     private var score = Score()
     private var soundPlayer = SoundPlayer()
     private var starField = StarField()
+    private var emitter = ParticleEmitter()
 
     class func newGameScene() -> GameScene {
         let scene = GameScene(size: CGSize(width: Screen.size, height: Screen.size))
@@ -25,6 +26,7 @@ class GameScene: SKScene {
         addChild(starField.node)
         addChild(player.node)
         addChild(plasmaBalls.node)
+        addChild(emitter.node)
         addChild(enemies.node)
         addChild(lives.node)
         addChild(score.node)
@@ -35,15 +37,17 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        plasmaBalls.update(player: player, enemies: enemies) { [self] (enemyDestroyed: Bool) in 
+        plasmaBalls.update(player: player, enemies: enemies) { [self] (enemyDestroyed: Bool, enemy: Enemy) in
             if enemyDestroyed {
                 run(soundPlayer.enemyDestroy)
                 score.increment()
+                emitter.emit(coordinate: enemy.coordinate)
             } else {
                 run(soundPlayer.enemyHit)
             }
         }
         player.update()
+        emitter.update()
         enemies.update(player: player) { [self] in
             lives.substractLife()
             player.hit()

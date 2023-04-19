@@ -23,6 +23,7 @@
 		97142B5129E22DC300069E6F /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97142B3E29E22DC200069E6F /* GameScene.swift */; };
 		97142B5229E22DC300069E6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97142B3F29E22DC300069E6F /* Assets.xcassets */; };
 		9715FBCC29E577D000C53D13 /* laser.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9715FBCB29E577D000C53D13 /* laser.wav */; };
+		97683F4029EFED5A0088EEC0 /* emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97683F3F29EFED5A0088EEC0 /* emitter.swift */; };
 		97D7FDDD29EC1D2F00CE18BD /* enemydestroy.wav in Resources */ = {isa = PBXBuildFile; fileRef = 97D7FDDC29EC1D2F00CE18BD /* enemydestroy.wav */; };
 		97D7FDDF29EC1D3C00CE18BD /* enemyhit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 97D7FDDE29EC1D3C00CE18BD /* enemyhit.wav */; };
 /* End PBXBuildFile section */
@@ -47,6 +48,7 @@
 		97142B4C29E22DC300069E6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		97142B4E29E22DC300069E6F /* shmup_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shmup_macOS.entitlements; sourceTree = "<group>"; };
 		9715FBCB29E577D000C53D13 /* laser.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = laser.wav; sourceTree = "<group>"; };
+		97683F3F29EFED5A0088EEC0 /* emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = emitter.swift; sourceTree = "<group>"; };
 		97D7FDDC29EC1D2F00CE18BD /* enemydestroy.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = enemydestroy.wav; sourceTree = "<group>"; };
 		97D7FDDE29EC1D3C00CE18BD /* enemyhit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = enemyhit.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,6 +77,7 @@
 			children = (
 				97026B4429EA8E1200665E39 /* background.swift */,
 				97026B4C29EAC81E00665E39 /* collision.swift */,
+				97683F3F29EFED5A0088EEC0 /* emitter.swift */,
 				97026B4729EA8E4D00665E39 /* enemy.swift */,
 				97026B5029EAEE3500665E39 /* GameOverScene.swift */,
 				97142B3E29E22DC200069E6F /* GameScene.swift */,
@@ -218,6 +221,7 @@
 				97026B3F29EA8CE700665E39 /* io.swift in Sources */,
 				97142B4829E22DC300069E6F /* AppDelegate.swift in Sources */,
 				97026B4829EA8E4D00665E39 /* enemy.swift in Sources */,
+				97683F4029EFED5A0088EEC0 /* emitter.swift in Sources */,
 				97026B4A29EA8E8500665E39 /* score.swift in Sources */,
 				97026B4229EA8D8300665E39 /* player.swift in Sources */,
 				97026B4529EA8E1200665E39 /* background.swift in Sources */,

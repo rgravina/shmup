@@ -49,16 +49,16 @@ class Enemies {
         createEnemy()
     }
 
-    func collides(node: SKNode, onCollision: (Bool) -> Void) {
+    func collides(node: SKNode, onCollision: (Bool, Enemy) -> Void) {
         for (index, enemy) in enemies.enumerated().reversed() {
             if Collision.collides(a: node, b: enemy.node) {
                 if enemy.hitPoints == 0 {
                     enemy.remove()
                     enemies.remove(at: index)
-                    onCollision(true)
+                    onCollision(true, enemy)
                 } else {
                     enemy.hit()
-                    onCollision(false)
+                    onCollision(false, enemy)
                 }
                 break
             }
