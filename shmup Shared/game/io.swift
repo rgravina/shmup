@@ -133,6 +133,9 @@ struct Color {
     static let black = NSColor(red: 0, green: 0, blue: 0, alpha: 1)
     static let white = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
     static let red = NSColor(red: 1, green: 0, blue: 0.30, alpha: 1)
+    static let yellow = NSColor(red: 1.00, green: 0.93, blue: 0.15, alpha: 1.00)
+    static let orange = NSColor(red: 1.00, green: 0.64, blue: 0.00, alpha: 1.00)
+    static let purple = NSColor(red: 0.49, green: 0.15, blue: 0.33, alpha: 1.00)
 }
 
 struct Text {
