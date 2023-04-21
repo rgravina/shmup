@@ -1,5 +1,39 @@
 import SpriteKit
 
+class Wave {
+    private(set) var node: SKSpriteNode!
+    let maxAge: Int = 10
+    var age: Int = 0
+
+    init(coordinate: Coordinate) {
+        node = SKSpriteNode(imageNamed: "circle_0")
+        node.position = coordinate.moveToSpriteCenter().toPosition()
+        node.zPosition = Layers.background.rawValue
+        node.texture?.filteringMode = .nearest
+        node.color = Color.orange
+        node.colorBlendFactor = 1
+    }
+
+    func update() {
+        age += 1
+        switch age {
+        case 0..<2:
+            node.texture = SKTexture(imageNamed: "circle_0")
+        case 2..<4:
+            node.texture = SKTexture(imageNamed: "circle_1")
+        case 4..<6:
+            node.texture = SKTexture(imageNamed: "circle_2")
+        case 6..<8:
+            node.texture = SKTexture(imageNamed: "circle_3")
+        case 8..<10:
+            node.texture = SKTexture(imageNamed: "circle_4")
+        default:
+            break
+        }
+        node.texture?.filteringMode = .nearest
+    }
+}
+
 enum ParticleEmitterColor {
     case red, blue
 }
@@ -109,15 +143,24 @@ class ParticleEmitter {
     private static let totalParticles = 30
     private(set) var node: SKNode!
     private var particles = [Particle]()
+    private var waves = [Wave]()
 
     init() {
         node = SKScene(size: .init(width: Screen.size, height: Screen.size))
     }
 
-    func emit(coordinate: Coordinate, color: ParticleEmitterColor) {
+    func emitWave(coordinate: Coordinate) {
+        let wave = Wave(
+            coordinate: coordinate
+        )
+        waves.append(wave)
+        node.addChild(wave.node)
+    }
+
+    func emitParticle(coordinate: Coordinate, color: ParticleEmitterColor) {
         for _ in 0..<ParticleEmitter.totalParticles {
             let particle = Particle(
-                coordinate: Coordinate(x: coordinate.x + Sprite.size/2, y: coordinate.y + Sprite.size/2),
+                coordinate: coordinate.moveToSpriteCenter(),
                 color: color,
                 xSpeed: Double.random(in: Particle.speeds) - Particle.speeds.upperBound/2,
                 ySpeed: Double.random(in: Particle.speeds) - Particle.speeds.upperBound/2
@@ -137,6 +180,13 @@ class ParticleEmitter {
     }
 
     func update() {
+        for (index, wave) in waves.enumerated().reversed() {
+            wave.update()
+            if wave.age > wave.maxAge {
+                wave.node.removeFromParent()
+                waves.remove(at: index)
+            }
+        }
         for (index, particle) in particles.enumerated().reversed() {
             particle.update()
             if particle.age > particle.maxAge {

@@ -37,16 +37,17 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        plasmaBalls.update(player: player, enemies: enemies) { [self] (enemyDestroyed: Bool, enemy: Enemy) in
+        plasmaBalls.update(player: player, enemies: enemies) { [self] (enemyDestroyed: Bool, enemy: Enemy, ball: PlasmaBall) in
             if enemyDestroyed {
                 run(soundPlayer.enemyDestroy)
                 score.increment()
-                emitter.emit(
+                emitter.emitParticle(
                     coordinate: enemy.coordinate,
                     color: ParticleEmitterColor.red
                 )
             } else {
                 run(soundPlayer.enemyHit)
+                emitter.emitWave(coordinate: ball.coordinate)
             }
         }
         player.update()
@@ -55,7 +56,7 @@ class GameScene: SKScene {
             lives.substractLife()
             player.hit()
             run(soundPlayer.collision)
-            emitter.emit(
+            emitter.emitParticle(
                 coordinate: player.coordinate,
                 color: ParticleEmitterColor.blue
             )

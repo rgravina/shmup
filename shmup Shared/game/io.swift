@@ -45,6 +45,10 @@ struct Coordinate {
         )
     }
 
+    func moveToSpriteCenter() -> Coordinate {
+        return Coordinate(x: x + Sprite.size/2, y: y + Sprite.size/2)
+    }
+
     func move(direction: Direction, pixels: Int = 2) -> Coordinate {
         switch direction {
         case .left:
