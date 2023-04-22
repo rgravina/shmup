@@ -1,5 +1,40 @@
 import SpriteKit
 
+class WaveText {
+    private(set) var node: SKNode!
+    private var text: Text!
+    private static var maxAge = 80
+    private var age = 0
+    private var wave: Int
+
+    init(wave: Int) {
+        self.wave = wave
+        node = SKScene(size: .init(width: Screen.size, height: Screen.size))
+        text = Text(
+            text: "wave \(self.wave)",
+            color: Color.darkGrey,
+            coordinate: Coordinate(x: 64, y: 32)
+        )
+        node.addChild(text.node)
+    }
+
+    func update() {
+        guard !node.isHidden else { return }
+        text.blink()
+        age += 1
+        if age > WaveText.maxAge {
+            node.isHidden = true
+        }
+    }
+
+    func nextWave(wave: Int) {
+        self.wave = wave
+        text.text = "wave \(wave)"
+        age = 0
+        node.isHidden = false
+    }
+}
+
 struct Animation {
     static let flash = SKAction.sequence([
         SKAction.colorize(with: Color.black, colorBlendFactor: 1, duration: 0),
@@ -37,16 +72,24 @@ class Enemy {
     func remove() {
         node.removeFromParent()
     }
+
+    func moveToTop() {
+        coordinate = Coordinate.randomStartingPosition()
+    }
 }
 
 class Enemies {
     private(set) var node: SKNode!
+    private var waveText: WaveText!
     private var enemies = [Enemy]()
+    private(set) var wave = 0
 
     init() {
         node = SKNode()
         node.zPosition = Layers.sprites.rawValue
-        createEnemy()
+        waveText = WaveText(wave: wave)
+        node.addChild(waveText.node)
+        nextWave()
     }
 
     func collides(ball: PlasmaBall, onCollision: (Bool, Enemy, PlasmaBall) -> Void) {
@@ -66,14 +109,14 @@ class Enemies {
     }
 
     func update(player: Player, onCollision: () -> Void) {
+        waveText.update()
         if enemies.isEmpty {
-            createEnemy()
+            nextWave()
         }
         for (index, enemy) in enemies.enumerated().reversed() {
             enemy.move()
             if enemy.coordinate.y > Screen.size {
-                enemy.remove()
-                enemies.remove(at: index)
+                enemy.moveToTop()
                 break
             }
             if !player.isInvunerable {
@@ -85,8 +128,18 @@ class Enemies {
         }
     }
 
+    func createWave() {
+        createEnemy()
+    }
+
+    func nextWave() {
+        wave += 1
+        waveText.nextWave(wave: wave)
+        createEnemy()
+    }
+
     private func createEnemy() {
-        let enemy = Enemy(coordinate: Coordinate(x: Int.random(in: 0..<Screen.size-Sprite.size), y: 0))
+        let enemy = Enemy(coordinate: Coordinate.randomStartingPosition())
         enemies.append(enemy)
         node.addChild(enemy.node)
     }

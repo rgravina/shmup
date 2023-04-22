@@ -49,6 +49,10 @@ struct Coordinate {
         return Coordinate(x: x + Sprite.size/2, y: y + Sprite.size/2)
     }
 
+    static func randomStartingPosition() -> Coordinate {
+        return Coordinate(x: Int.random(in: 0..<(Screen.size - Sprite.size)), y: -Sprite.size)
+    }
+
     func move(direction: Direction, pixels: Int = 2) -> Coordinate {
         switch direction {
         case .left:
@@ -172,15 +176,22 @@ struct Text {
     ]
     private let display = SKLabelNode(fontNamed: "PICO-8")
     var blinkIndex = 0
-    var text: String
+    var text: String {
+        get {
+            return display.text ?? ""
+        }
+        set {
+            display.text = newValue
+        }
+    }
     var color: NSColor
 
     init(text: String, color: NSColor, coordinate: Coordinate) {
-        self.text = text
         self.color = color
         node = SKNode()
         node.position = coordinate.toPosition()
         node.zPosition = Layers.interface.rawValue
+        display.text = text
         drawText()
     }
 
