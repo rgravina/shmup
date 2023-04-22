@@ -45,6 +45,7 @@ class GameScene: SKScene {
                     coordinate: enemy.coordinate,
                     color: ParticleEmitterColor.red
                 )
+                emitter.emitLargeWave(coordinate: ball.coordinate)
             } else {
                 run(soundPlayer.enemyHit)
                 emitter.emitWave(coordinate: ball.coordinate)

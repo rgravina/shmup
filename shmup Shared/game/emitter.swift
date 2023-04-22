@@ -1,5 +1,29 @@
 import SpriteKit
 
+class LargeWave {
+    private(set) var node: SKShapeNode!
+    let startRadius: CGFloat = 2
+    let maxAge: Int = 5
+    var age: Int = 0
+
+    init(coordinate: Coordinate) {
+        node = SKShapeNode(circleOfRadius: startRadius)
+        node.strokeColor = Color.white
+        node.position = coordinate.moveToSpriteCenter().toPosition()
+        node.zPosition = Layers.background.rawValue
+    }
+
+    func update() {
+        age += 1
+        let parent = node.parent
+        let position = node.position
+        node.removeFromParent()
+        node = SKShapeNode(circleOfRadius: startRadius + CGFloat(age * 5))
+        node.position = position
+        parent?.addChild(node)
+    }
+}
+
 class Wave {
     private(set) var node: SKSpriteNode!
     let maxAge: Int = 10
@@ -144,15 +168,20 @@ class ParticleEmitter {
     private(set) var node: SKNode!
     private var particles = [Particle]()
     private var waves = [Wave]()
+    private var largeWaves = [LargeWave]()
 
     init() {
         node = SKScene(size: .init(width: Screen.size, height: Screen.size))
     }
 
+    func emitLargeWave(coordinate: Coordinate) {
+        let wave = LargeWave(coordinate: coordinate)
+        largeWaves.append(wave)
+        node.addChild(wave.node)
+    }
+
     func emitWave(coordinate: Coordinate) {
-        let wave = Wave(
-            coordinate: coordinate
-        )
+        let wave = Wave(coordinate: coordinate)
         waves.append(wave)
         node.addChild(wave.node)
     }
@@ -185,6 +214,13 @@ class ParticleEmitter {
             if wave.age > wave.maxAge {
                 wave.node.removeFromParent()
                 waves.remove(at: index)
+            }
+        }
+        for (index, wave) in largeWaves.enumerated().reversed() {
+            wave.update()
+            if wave.age > wave.maxAge {
+                wave.node.removeFromParent()
+                largeWaves.remove(at: index)
             }
         }
         for (index, particle) in particles.enumerated().reversed() {
