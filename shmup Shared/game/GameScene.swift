@@ -41,9 +41,9 @@ class GameScene: SKScene {
             if enemyDestroyed {
                 run(soundPlayer.enemyDestroy)
                 score.increment()
-                emitter.emitParticle(
+                emitter.emitBoom(
                     coordinate: enemy.coordinate,
-                    color: ParticleEmitterColor.red
+                    color: BoomColor.red
                 )
                 emitter.emitLargeWave(coordinate: ball.coordinate)
                 emitter.emitLotsOfSparks(coordinate: ball.coordinate)
@@ -59,9 +59,9 @@ class GameScene: SKScene {
             lives.substractLife()
             player.hit()
             run(soundPlayer.collision)
-            emitter.emitParticle(
+            emitter.emitBoom(
                 coordinate: player.coordinate,
-                color: ParticleEmitterColor.blue
+                color: BoomColor.blue
             )
             emitter.emitLargeWave(coordinate: player.coordinate)
             emitter.emitLotsOfSparks(coordinate: player.coordinate)

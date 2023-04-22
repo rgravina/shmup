@@ -93,21 +93,21 @@ class Wave {
     }
 }
 
-enum ParticleEmitterColor {
+enum BoomColor {
     case red, blue
 }
 
-class Particle {
+class Boom {
     private(set) var node: SKShapeNode!
     static let speeds = 0...6.0
-    private var emitterColor: ParticleEmitterColor
+    private var emitterColor: BoomColor
     var xSpeed: Double
     var ySpeed: Double
     let maxAge: Int
     var age: Int
     private(set) var size: Double
 
-    init(coordinate: Coordinate, color: ParticleEmitterColor, xSpeed: Double, ySpeed: Double, age: Int, size: Double, maxAge: Int) {
+    init(coordinate: Coordinate, color: BoomColor, xSpeed: Double, ySpeed: Double, age: Int, size: Double, maxAge: Int) {
         self.emitterColor = color
         self.xSpeed = xSpeed
         self.ySpeed = ySpeed
@@ -121,7 +121,7 @@ class Particle {
         node.zPosition = Layers.background.rawValue
     }
 
-    convenience init(coordinate: Coordinate, color: ParticleEmitterColor, xSpeed: Double, ySpeed: Double) {
+    convenience init(coordinate: Coordinate, color: BoomColor, xSpeed: Double, ySpeed: Double) {
         self.init(
             coordinate: coordinate,
             color: color,
@@ -133,7 +133,7 @@ class Particle {
         )
     }
 
-    convenience init(coordinate: Coordinate, color: ParticleEmitterColor, size: Double, age: Int, maxAge: Int) {
+    convenience init(coordinate: Coordinate, color: BoomColor, size: Double, age: Int, maxAge: Int) {
         self.init(
             coordinate: coordinate,
             color: color,
@@ -199,9 +199,8 @@ class Particle {
 }
 
 class ParticleEmitter {
-    private static let totalParticles = 30
     private(set) var node: SKNode!
-    private var particles = [Particle]()
+    private var booms = [Boom]()
     private var waves = [Wave]()
     private var largeWaves = [LargeWave]()
     private var sparks = [Spark]()
@@ -223,7 +222,7 @@ class ParticleEmitter {
     }
 
     func emitLotsOfSparks(coordinate: Coordinate) {
-        for _ in 0..<ParticleEmitter.totalParticles {
+        for _ in 0..<30 {
             let spark = Spark(coordinate: coordinate)
             sparks.append(spark)
             node.addChild(spark.node)
@@ -242,25 +241,25 @@ class ParticleEmitter {
         node.addChild(wave.node)
     }
 
-    func emitParticle(coordinate: Coordinate, color: ParticleEmitterColor) {
-        for _ in 0..<ParticleEmitter.totalParticles {
-            let particle = Particle(
+    func emitBoom(coordinate: Coordinate, color: BoomColor) {
+        for _ in 0..<30 {
+            let particle = Boom(
                 coordinate: coordinate.moveToSpriteCenter(),
                 color: color,
-                xSpeed: Double.random(in: Particle.speeds) - Particle.speeds.upperBound/2,
-                ySpeed: Double.random(in: Particle.speeds) - Particle.speeds.upperBound/2
+                xSpeed: Double.random(in: Boom.speeds) - Boom.speeds.upperBound/2,
+                ySpeed: Double.random(in: Boom.speeds) - Boom.speeds.upperBound/2
             )
-            particles.append(particle)
+            booms.append(particle)
             node.addChild(particle.node)
         }
-        let particle = Particle(
+        let particle = Boom(
             coordinate: coordinate,
             color: color,
             size: 8,
             age: 0,
             maxAge: 5
         )
-        particles.append(particle)
+        booms.append(particle)
         node.addChild(particle.node)
     }
 
@@ -286,13 +285,13 @@ class ParticleEmitter {
                 largeWaves.remove(at: index)
             }
         }
-        for (index, particle) in particles.enumerated().reversed() {
+        for (index, particle) in booms.enumerated().reversed() {
             particle.update()
             if particle.age > particle.maxAge {
                 particle.decrease(by: 0.5)
                 if particle.size < 0 {
                     particle.node.removeFromParent()
-                    particles.remove(at: index)
+                    booms.remove(at: index)
                 }
             }
         }
