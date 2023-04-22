@@ -1,5 +1,40 @@
 import SpriteKit
 
+class Spark {
+    private(set) var node: SKSpriteNode!
+    static let speeds = 0...6.0
+    var xSpeed: Double
+    var ySpeed: Double
+    let maxAge: Int
+    var age: Int
+
+    convenience init(coordinate: Coordinate) {
+        self.init(
+            coordinate: coordinate,
+            xSpeed: Double.random(in: Spark.speeds) - Spark.speeds.upperBound/2,
+            ySpeed: Double.random(in: Spark.speeds) - Spark.speeds.upperBound/2
+        )
+    }
+
+    init(coordinate: Coordinate, xSpeed: Double, ySpeed: Double) {
+        node = SKSpriteNode(imageNamed: "spark")
+        node.position = coordinate.moveToSpriteCenter().toPosition()
+        node.zPosition = Layers.background.rawValue
+        age = Int.random(in: 0...2)
+        maxAge = 10 + Int.random(in: 0...10)
+        self.xSpeed = xSpeed
+        self.ySpeed = ySpeed
+    }
+
+    func update() {
+        node.position.x = node.position.x + xSpeed
+        node.position.y = node.position.y + ySpeed
+        xSpeed *= 0.85
+        ySpeed *= 0.85
+        age += 1
+    }
+}
+
 class LargeWave {
     private(set) var node: SKShapeNode!
     let startRadius: CGFloat = 2
@@ -169,9 +204,30 @@ class ParticleEmitter {
     private var particles = [Particle]()
     private var waves = [Wave]()
     private var largeWaves = [LargeWave]()
+    private var sparks = [Spark]()
 
     init() {
         node = SKScene(size: .init(width: Screen.size, height: Screen.size))
+    }
+
+    func emitHitSparks(coordinate: Coordinate) {
+        for _ in 0..<2 {
+            let spark = Spark(
+                coordinate: coordinate,
+                xSpeed: Double.random(in: 0..<20) - 10,
+                ySpeed: Double.random(in: Spark.speeds)
+            )
+            sparks.append(spark)
+            node.addChild(spark.node)
+        }
+    }
+
+    func emitLotsOfSparks(coordinate: Coordinate) {
+        for _ in 0..<ParticleEmitter.totalParticles {
+            let spark = Spark(coordinate: coordinate)
+            sparks.append(spark)
+            node.addChild(spark.node)
+        }
     }
 
     func emitLargeWave(coordinate: Coordinate) {
@@ -209,6 +265,13 @@ class ParticleEmitter {
     }
 
     func update() {
+        for (index, spark) in sparks.enumerated().reversed() {
+            spark.update()
+            if spark.age > spark.maxAge {
+                spark.node.removeFromParent()
+                sparks.remove(at: index)
+            }
+        }
         for (index, wave) in waves.enumerated().reversed() {
             wave.update()
             if wave.age > wave.maxAge {

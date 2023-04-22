@@ -46,9 +46,11 @@ class GameScene: SKScene {
                     color: ParticleEmitterColor.red
                 )
                 emitter.emitLargeWave(coordinate: ball.coordinate)
+                emitter.emitLotsOfSparks(coordinate: ball.coordinate)
             } else {
                 run(soundPlayer.enemyHit)
                 emitter.emitWave(coordinate: ball.coordinate)
+                emitter.emitHitSparks(coordinate: ball.coordinate)
             }
         }
         player.update()
@@ -61,6 +63,8 @@ class GameScene: SKScene {
                 coordinate: player.coordinate,
                 color: ParticleEmitterColor.blue
             )
+            emitter.emitLargeWave(coordinate: player.coordinate)
+            emitter.emitLotsOfSparks(coordinate: player.coordinate)
             if lives.lives == 0, let skView = view {
                 let scene = GameOverScene.newGameScene()
                 skView.presentScene(scene)
