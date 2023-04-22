@@ -10,6 +10,8 @@ class GameScene: SKScene {
     private var soundPlayer = SoundPlayer()
     private var starField = StarField()
     private var emitter = ParticleEmitter()
+    private var waveText: WaveText!
+    private var wave = 1
 
     class func newGameScene() -> GameScene {
         let scene = GameScene(size: CGSize(width: Screen.size, height: Screen.size))
@@ -23,6 +25,9 @@ class GameScene: SKScene {
     func setUpScene() {
         view?.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player(soundPlayer: soundPlayer)
+        waveText = WaveText(wave: wave) { [self] in
+            waveText.node.removeFromParent()
+        }
         addChild(starField.node)
         addChild(player.node)
         addChild(plasmaBalls.node)
@@ -30,6 +35,7 @@ class GameScene: SKScene {
         addChild(enemies.node)
         addChild(lives.node)
         addChild(score.node)
+        addChild(waveText.node)
     }
 
     override func didMove(to view: SKView) {
@@ -53,6 +59,7 @@ class GameScene: SKScene {
                 emitter.emitHitSparks(coordinate: ball.coordinate)
             }
         }
+        waveText.update()
         player.update()
         emitter.update()
         enemies.update(player: player) { [self] in
