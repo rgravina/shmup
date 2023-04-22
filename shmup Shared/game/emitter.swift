@@ -276,7 +276,7 @@ class ParticleEmitter {
         }
     }
 
-    func emitLotsOfSparks(coordinate: Coordinate) {
+    func emitBoomSparks(coordinate: Coordinate) {
         for _ in 0..<30 {
             let spark = Spark(coordinate: coordinate)
             particles.append(spark)

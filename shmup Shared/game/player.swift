@@ -174,7 +174,7 @@ class PlasmaBalls {
         plasmaBalls.append(plasmaBall)
     }
 
-    func update(player: Player, enemies: Enemies, onCollision: (Bool, Enemy, PlasmaBall) -> Void) {
+    func update(player: Player, enemies: Enemies, onCollision: (Enemy, PlasmaBall) -> Void) {
         if player.shouldFire {
             let plasmaBall = PlasmaBall(coordinate: player.coordinate)
             plasmaBalls.append(plasmaBall)
@@ -187,10 +187,10 @@ class PlasmaBalls {
                 plasmaBall.remove()
                 plasmaBalls.remove(at: index)
             }
-            enemies.collides(ball: plasmaBall) { enemyDestroyed, enemy, ball in
+            enemies.collides(ball: plasmaBall) { enemy, ball in
                 plasmaBall.remove()
                 plasmaBalls.remove(at: index)
-                onCollision(enemyDestroyed, enemy, ball)
+                onCollision(enemy, ball)
             }
         }
     }

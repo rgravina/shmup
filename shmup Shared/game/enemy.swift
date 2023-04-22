@@ -48,6 +48,7 @@ class Enemy {
     private(set) var node: SKSpriteNode!
     private var sprite: Double = 0
     private(set) var hitPoints: Int = 5
+    private(set) var destroyed = false
 
     init(coordinate: Coordinate) {
         self.coordinate = coordinate
@@ -70,11 +71,12 @@ class Enemy {
     }
 
     func remove() {
+        destroyed = true
         node.removeFromParent()
     }
 
     func moveToTop() {
-        coordinate = Coordinate.randomStartingPosition()
+        coordinate = Screen.randomStartingCoordinate()
     }
 }
 
@@ -92,16 +94,16 @@ class Enemies {
         nextWave()
     }
 
-    func collides(ball: PlasmaBall, onCollision: (Bool, Enemy, PlasmaBall) -> Void) {
+    func collides(ball: PlasmaBall, onCollision: (Enemy, PlasmaBall) -> Void) {
         for (index, enemy) in enemies.enumerated().reversed() {
             if Collision.collides(a: ball.node, b: enemy.node) {
                 if enemy.hitPoints == 0 {
                     enemy.remove()
                     enemies.remove(at: index)
-                    onCollision(true, enemy, ball)
+                    onCollision(enemy, ball)
                 } else {
                     enemy.hit()
-                    onCollision(false, enemy, ball)
+                    onCollision(enemy, ball)
                 }
                 break
             }
@@ -113,7 +115,7 @@ class Enemies {
         if enemies.isEmpty {
             nextWave()
         }
-        for (index, enemy) in enemies.enumerated().reversed() {
+        for (_, enemy) in enemies.enumerated().reversed() {
             enemy.move()
             if enemy.coordinate.y > Screen.size {
                 enemy.moveToTop()
@@ -139,7 +141,7 @@ class Enemies {
     }
 
     private func createEnemy() {
-        let enemy = Enemy(coordinate: Coordinate.randomStartingPosition())
+        let enemy = Enemy(coordinate: Screen.randomStartingCoordinate())
         enemies.append(enemy)
         node.addChild(enemy.node)
     }

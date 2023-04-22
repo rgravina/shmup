@@ -20,8 +20,8 @@ class GameScene: SKScene {
         return scene
     }
 
-    func setUpScene() {
-        view?.preferredFramesPerSecond = Screen.framesPerSecond
+    override func didMove(to view: SKView) {
+        view.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player(soundPlayer: soundPlayer)
         addChild(starField.node)
         addChild(player.node)
@@ -32,13 +32,9 @@ class GameScene: SKScene {
         addChild(score.node)
     }
 
-    override func didMove(to view: SKView) {
-        self.setUpScene()
-    }
-
     override func update(_ currentTime: TimeInterval) {
-        plasmaBalls.update(player: player, enemies: enemies) { [self] (enemyDestroyed: Bool, enemy: Enemy, ball: PlasmaBall) in
-            if enemyDestroyed {
+        plasmaBalls.update(player: player, enemies: enemies) { [self] (enemy: Enemy, ball: PlasmaBall) in
+            if enemy.destroyed {
                 run(soundPlayer.enemyDestroy)
                 score.increment()
                 emitter.emitBoom(
@@ -46,7 +42,7 @@ class GameScene: SKScene {
                     color: BoomColor.red
                 )
                 emitter.emitLargeWave(coordinate: ball.coordinate)
-                emitter.emitLotsOfSparks(coordinate: ball.coordinate)
+                emitter.emitBoomSparks(coordinate: ball.coordinate)
             } else {
                 run(soundPlayer.enemyHit)
                 emitter.emitWave(coordinate: ball.coordinate)
@@ -64,7 +60,7 @@ class GameScene: SKScene {
                 color: BoomColor.blue
             )
             emitter.emitLargeWave(coordinate: player.coordinate)
-            emitter.emitLotsOfSparks(coordinate: player.coordinate)
+            emitter.emitBoomSparks(coordinate: player.coordinate)
             if lives.lives == 0, let skView = view {
                 let scene = GameOverScene.newGameScene()
                 skView.presentScene(scene)

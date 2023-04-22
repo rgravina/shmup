@@ -49,10 +49,6 @@ struct Coordinate {
         return Coordinate(x: x + Sprite.size/2, y: y + Sprite.size/2)
     }
 
-    static func randomStartingPosition() -> Coordinate {
-        return Coordinate(x: Int.random(in: 0..<(Screen.size - Sprite.size)), y: -Sprite.size)
-    }
-
     func move(direction: Direction, pixels: Int = 2) -> Coordinate {
         switch direction {
         case .left:
@@ -112,6 +108,10 @@ class Screen {
 
     static func randomCoordinate() -> Coordinate {
         return Coordinate(x: Int.random(in: 0..<Screen.size), y: Int.random(in: 0..<Screen.size))
+    }
+
+    static func randomStartingCoordinate() -> Coordinate {
+        return Coordinate(x: Int.random(in: 0..<(Screen.size - Sprite.size)), y: -Sprite.size)
     }
 }
 
