@@ -1,12 +1,19 @@
 import SpriteKit
 
-class Spark {
-    private(set) var node: SKSpriteNode!
+protocol Particle {
+    func update()
+    func remove()
+    func add(parent: SKNode)
+    var alive: Bool { get }
+}
+
+class Spark: Particle {
+    private let node: SKSpriteNode
     static let speeds = 0...6.0
     var xSpeed: Double
     var ySpeed: Double
-    let maxAge: Int
-    var age: Int
+    private let maxAge: Int
+    private var age: Int
 
     convenience init(coordinate: Coordinate) {
         self.init(
@@ -33,13 +40,25 @@ class Spark {
         ySpeed *= 0.85
         age += 1
     }
+
+    func remove() {
+        node.removeFromParent()
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var alive: Bool {
+        return age <= maxAge
+    }
 }
 
-class LargeWave {
-    private(set) var node: SKShapeNode!
+class LargeWave: Particle {
+    private var node: SKShapeNode
     let startRadius: CGFloat = 2
-    let maxAge: Int = 5
-    var age: Int = 0
+    private let maxAge: Int = 5
+    private var age: Int = 0
 
     init(coordinate: Coordinate) {
         node = SKShapeNode(circleOfRadius: startRadius)
@@ -57,12 +76,24 @@ class LargeWave {
         node.position = position
         parent?.addChild(node)
     }
+
+    func remove() {
+        node.removeFromParent()
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var alive: Bool {
+        return age <= maxAge
+    }
 }
 
-class Wave {
-    private(set) var node: SKSpriteNode!
-    let maxAge: Int = 10
-    var age: Int = 0
+class Wave: Particle {
+    private let node: SKSpriteNode
+    private let maxAge: Int = 10
+    private var age: Int = 0
 
     init(coordinate: Coordinate) {
         node = SKSpriteNode(imageNamed: "circle_0")
@@ -91,20 +122,32 @@ class Wave {
         }
         node.texture?.filteringMode = .nearest
     }
+
+    func remove() {
+        node.removeFromParent()
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var alive: Bool {
+        return age <= maxAge
+    }
 }
 
 enum BoomColor {
     case red, blue
 }
 
-class Boom {
-    private(set) var node: SKShapeNode!
+class Boom: Particle {
+    private let node: SKShapeNode
     static let speeds = 0...6.0
     private var emitterColor: BoomColor
     var xSpeed: Double
     var ySpeed: Double
-    let maxAge: Int
-    var age: Int
+    private let maxAge: Int
+    private var age: Int
     private(set) var size: Double
 
     init(coordinate: Coordinate, color: BoomColor, xSpeed: Double, ySpeed: Double, age: Int, size: Double, maxAge: Int) {
@@ -153,6 +196,21 @@ class Boom {
         xSpeed *= 0.85
         ySpeed *= 0.85
         age += 1
+        if age > maxAge {
+            decrease(by: 0.5)
+        }
+    }
+
+    func remove() {
+        node.removeFromParent()
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var alive: Bool {
+        return age <= maxAge && size >= 0
     }
 
     private var color: NSColor {
@@ -192,18 +250,15 @@ class Boom {
         }
     }
 
-    func decrease(by: Double) {
+    private func decrease(by: Double) {
         size -= by
         node.run(SKAction.scale(by: by, duration: 0))
     }
 }
 
 class ParticleEmitter {
-    private(set) var node: SKNode!
-    private var booms = [Boom]()
-    private var waves = [Wave]()
-    private var largeWaves = [LargeWave]()
-    private var sparks = [Spark]()
+    let node: SKNode
+    private var particles = [Particle]()
 
     init() {
         node = SKScene(size: .init(width: Screen.size, height: Screen.size))
@@ -216,29 +271,29 @@ class ParticleEmitter {
                 xSpeed: Double.random(in: 0..<20) - 10,
                 ySpeed: Double.random(in: Spark.speeds)
             )
-            sparks.append(spark)
-            node.addChild(spark.node)
+            particles.append(spark)
+            spark.add(parent: node)
         }
     }
 
     func emitLotsOfSparks(coordinate: Coordinate) {
         for _ in 0..<30 {
             let spark = Spark(coordinate: coordinate)
-            sparks.append(spark)
-            node.addChild(spark.node)
+            particles.append(spark)
+            spark.add(parent: node)
         }
     }
 
     func emitLargeWave(coordinate: Coordinate) {
         let wave = LargeWave(coordinate: coordinate)
-        largeWaves.append(wave)
-        node.addChild(wave.node)
+        particles.append(wave)
+        wave.add(parent: node)
     }
 
     func emitWave(coordinate: Coordinate) {
         let wave = Wave(coordinate: coordinate)
-        waves.append(wave)
-        node.addChild(wave.node)
+        particles.append(wave)
+        wave.add(parent: node)
     }
 
     func emitBoom(coordinate: Coordinate, color: BoomColor) {
@@ -249,8 +304,8 @@ class ParticleEmitter {
                 xSpeed: Double.random(in: Boom.speeds) - Boom.speeds.upperBound/2,
                 ySpeed: Double.random(in: Boom.speeds) - Boom.speeds.upperBound/2
             )
-            booms.append(particle)
-            node.addChild(particle.node)
+            particles.append(particle)
+            particle.add(parent: node)
         }
         let particle = Boom(
             coordinate: coordinate,
@@ -259,40 +314,16 @@ class ParticleEmitter {
             age: 0,
             maxAge: 5
         )
-        booms.append(particle)
-        node.addChild(particle.node)
+        particles.append(particle)
+        particle.add(parent: node)
     }
 
     func update() {
-        for (index, spark) in sparks.enumerated().reversed() {
-            spark.update()
-            if spark.age > spark.maxAge {
-                spark.node.removeFromParent()
-                sparks.remove(at: index)
-            }
-        }
-        for (index, wave) in waves.enumerated().reversed() {
-            wave.update()
-            if wave.age > wave.maxAge {
-                wave.node.removeFromParent()
-                waves.remove(at: index)
-            }
-        }
-        for (index, wave) in largeWaves.enumerated().reversed() {
-            wave.update()
-            if wave.age > wave.maxAge {
-                wave.node.removeFromParent()
-                largeWaves.remove(at: index)
-            }
-        }
-        for (index, particle) in booms.enumerated().reversed() {
+        for (index, particle) in particles.enumerated().reversed() {
             particle.update()
-            if particle.age > particle.maxAge {
-                particle.decrease(by: 0.5)
-                if particle.size < 0 {
-                    particle.node.removeFromParent()
-                    booms.remove(at: index)
-                }
+            if !particle.alive {
+                particle.remove()
+                particles.remove(at: index)
             }
         }
     }
