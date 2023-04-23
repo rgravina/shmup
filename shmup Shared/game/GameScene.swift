@@ -32,54 +32,64 @@ class GameScene: SKScene {
         addChild(score.node)
     }
 
-    override func update(_ currentTime: TimeInterval) {
-        plasmaBalls.update(player: player, enemies: enemies) { [self] (enemy: Enemy, ball: PlasmaBall) in
-            if enemy.destroyed {
-                run(soundPlayer.enemyDestroy)
-                score.increment()
-                emitter.emitBoom(
-                    coordinate: enemy.coordinate,
-                    color: BoomColor.red
-                )
-                emitter.emitLargeWave(coordinate: ball.coordinate)
-                emitter.emitBoomSparks(coordinate: ball.coordinate)
-            } else {
-                run(soundPlayer.enemyHit)
-                emitter.emitWave(coordinate: ball.coordinate)
-                emitter.emitHitSparks(coordinate: ball.coordinate)
-            }
+    private func onPlayerEmemyCollision() {
+        lives.substractLife()
+        player.hit()
+        run(soundPlayer.collision)
+        emitter.emitBoom(
+            coordinate: player.coordinate,
+            color: BoomColor.blue
+        )
+        emitter.emitLargeWave(coordinate: player.coordinate)
+        emitter.emitBoomSparks(coordinate: player.coordinate)
+        if lives.lives == 0, let skView = view {
+            let scene = GameOverScene.newGameScene()
+            skView.presentScene(scene)
+            skView.ignoresSiblingOrder = true
+            skView.showsFPS = true
+            skView.showsNodeCount = true
         }
+    }
+
+    private func onNewEnemyWave() {
+        if enemies.wave > 4, let skView = view {
+            let scene = WinScene.newGameScene()
+            skView.presentScene(scene)
+            skView.ignoresSiblingOrder = true
+            skView.showsFPS = true
+            skView.showsNodeCount = true
+        }
+    }
+
+    private func onBallEnemyCollision(enemy: Enemy, ball: PlasmaBall) {
+        if enemy.destroyed {
+            run(soundPlayer.enemyDestroy)
+            score.increment()
+            emitter.emitBoom(
+                coordinate: enemy.coordinate,
+                color: BoomColor.red
+            )
+            emitter.emitLargeWave(coordinate: ball.coordinate)
+            emitter.emitBoomSparks(coordinate: ball.coordinate)
+        } else {
+            run(soundPlayer.enemyHit)
+            emitter.emitWave(coordinate: ball.coordinate)
+            emitter.emitHitSparks(coordinate: ball.coordinate)
+        }
+    }
+
+    override func update(_ currentTime: TimeInterval) {
+        plasmaBalls.update(
+            player: player,
+            enemies: enemies,
+            onCollision: onBallEnemyCollision
+        )
         player.update()
         emitter.update()
         enemies.update(
             player: player,
-            onCollision: {
-                lives.substractLife()
-                player.hit()
-                run(soundPlayer.collision)
-                emitter.emitBoom(
-                    coordinate: player.coordinate,
-                    color: BoomColor.blue
-                )
-                emitter.emitLargeWave(coordinate: player.coordinate)
-                emitter.emitBoomSparks(coordinate: player.coordinate)
-                if lives.lives == 0, let skView = view {
-                    let scene = GameOverScene.newGameScene()
-                    skView.presentScene(scene)
-                    skView.ignoresSiblingOrder = true
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
-                }
-            },
-            onNewWave: {
-                if enemies.wave > 4, let skView = view {
-                    let scene = WinScene.newGameScene()
-                    skView.presentScene(scene)
-                    skView.ignoresSiblingOrder = true
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
-                }
-            }
+            onCollision: onPlayerEmemyCollision,
+            onNewWave: onNewEnemyWave
         )
         score.update()
         starField.update()
