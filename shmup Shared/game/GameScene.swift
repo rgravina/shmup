@@ -51,24 +51,36 @@ class GameScene: SKScene {
         }
         player.update()
         emitter.update()
-        enemies.update(player: player) { [self] in
-            lives.substractLife()
-            player.hit()
-            run(soundPlayer.collision)
-            emitter.emitBoom(
-                coordinate: player.coordinate,
-                color: BoomColor.blue
-            )
-            emitter.emitLargeWave(coordinate: player.coordinate)
-            emitter.emitBoomSparks(coordinate: player.coordinate)
-            if lives.lives == 0, let skView = view {
-                let scene = GameOverScene.newGameScene()
-                skView.presentScene(scene)
-                skView.ignoresSiblingOrder = true
-                skView.showsFPS = true
-                skView.showsNodeCount = true
+        enemies.update(
+            player: player,
+            onCollision: {
+                lives.substractLife()
+                player.hit()
+                run(soundPlayer.collision)
+                emitter.emitBoom(
+                    coordinate: player.coordinate,
+                    color: BoomColor.blue
+                )
+                emitter.emitLargeWave(coordinate: player.coordinate)
+                emitter.emitBoomSparks(coordinate: player.coordinate)
+                if lives.lives == 0, let skView = view {
+                    let scene = GameOverScene.newGameScene()
+                    skView.presentScene(scene)
+                    skView.ignoresSiblingOrder = true
+                    skView.showsFPS = true
+                    skView.showsNodeCount = true
+                }
+            },
+            onNewWave: {
+                if enemies.wave > 4, let skView = view {
+                    let scene = WinScene.newGameScene()
+                    skView.presentScene(scene)
+                    skView.ignoresSiblingOrder = true
+                    skView.showsFPS = true
+                    skView.showsNodeCount = true
+                }
             }
-        }
+        )
         score.update()
         starField.update()
     }

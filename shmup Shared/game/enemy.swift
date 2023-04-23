@@ -110,10 +110,11 @@ class Enemies {
         }
     }
 
-    func update(player: Player, onCollision: () -> Void) {
+    func update(player: Player, onCollision: () -> Void, onNewWave: () -> Void) {
         waveText.update()
         if enemies.isEmpty {
             nextWave()
+            onNewWave()
         }
         for (_, enemy) in enemies.enumerated().reversed() {
             enemy.move()
