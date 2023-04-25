@@ -119,6 +119,40 @@ struct Sprite {
     static let size = 8
 }
 
+class SpriteSheet {
+    let texture: SKTexture
+    let spriteWidth: CGFloat
+    let spriteHeight: CGFloat
+    let rows: Int
+    let cols: Int
+
+    init(imageNamed: String, rows: Int, cols: Int) {
+        self.rows = rows
+        self.cols = cols
+        texture = SKTexture(imageNamed: imageNamed)
+        texture.filteringMode = .nearest
+        let width = texture.textureRect().width
+        let height = texture.textureRect().height
+        spriteWidth = width/CGFloat(cols)
+        spriteHeight = height/CGFloat(rows)
+    }
+
+    func sprite(row: Int, col: Int, size: Int = 1) -> SKSpriteNode {
+        let spriteTexture = SKTexture(
+            rect: CGRect(
+                x: spriteWidth * CGFloat(col),
+                y: spriteHeight * CGFloat(rows - row - 1 * size),
+                width: spriteWidth * CGFloat(size),
+                height: spriteHeight * CGFloat(size)
+            ),
+            in: texture
+        )
+        let sprite = SKSpriteNode(texture: spriteTexture)
+        sprite.anchorPoint = .init(x: 0, y: 0)
+        return sprite
+    }
+}
+
 struct SoundPlayer {
     let laser: SKAction
     let collision: SKAction
