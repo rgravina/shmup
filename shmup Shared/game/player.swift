@@ -1,10 +1,10 @@
 import SpriteKit
 import Foundation
 
-class Player {
+class Player: Drawable {
     private(set) var coordinate: Coordinate = Coordinate(x: Screen.size/2, y: Screen.size/2)
     private(set) var direction: Direction = .none
-    private(set) var node: SKNode!
+    private var node: SKNode!
     private var soundPlayer: SoundPlayer
     private var ship: SKSpriteNode!
     private var flame: SKSpriteNode!
@@ -32,6 +32,14 @@ class Player {
         node.addChild(ship)
         node.addChild(flame)
         node.addChild(flash)
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
     }
 
     func point(direction: Direction) {
@@ -132,9 +140,9 @@ class Player {
     }
 }
 
-class PlasmaBall {
+class PlasmaBall: Drawable {
     private(set) var coordinate: Coordinate
-    private(set) var node: SKNode!
+    private var node: SKNode!
     private var ball: SKSpriteNode!
 
     init(coordinate: Coordinate) {
@@ -146,6 +154,14 @@ class PlasmaBall {
         Screen.setup(sprite: ball)
         node.addChild(ball)
         move()
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
     }
 
     func update() {
@@ -162,8 +178,8 @@ class PlasmaBall {
     }
 }
 
-class PlasmaBalls {
-    private(set) var node: SKNode!
+class PlasmaBalls: Drawable {
+    private var node: SKNode!
     private var plasmaBalls = [PlasmaBall]()
 
     init() {
@@ -174,11 +190,19 @@ class PlasmaBalls {
         plasmaBalls.append(plasmaBall)
     }
 
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
+    }
+
     func update(player: Player, enemies: Enemies, onCollision: (Enemy, PlasmaBall) -> Void) {
         if player.shouldFire {
             let plasmaBall = PlasmaBall(coordinate: player.coordinate)
             plasmaBalls.append(plasmaBall)
-            node.addChild(plasmaBall.node)
+            plasmaBall.add(parent: node)
         }
 
         for (index, plasmaBall) in plasmaBalls.enumerated().reversed() {

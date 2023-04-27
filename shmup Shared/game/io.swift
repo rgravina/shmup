@@ -119,6 +119,15 @@ struct Sprite {
     static let size = 8
 }
 
+protocol Drawable {
+    func add(parent: SKNode)
+    var position: CGPoint { get }
+}
+
+protocol Pixelatable {
+    func pixelate(using view: SKView)
+}
+
 class SpriteSheet {
     let texture: SKTexture
     let spriteWidth: CGFloat
@@ -186,8 +195,8 @@ struct Color {
     static let lightBrown = NSColor(red: 1, green: 0.80, blue: 0.67, alpha: 1)
 }
 
-struct Text {
-    private(set) var node: SKNode!
+class Text: Drawable, Pixelatable {
+    private var node: SKNode!
     private var blinkColors = [
         Color.darkGrey,
         Color.darkGrey,
@@ -209,6 +218,8 @@ struct Text {
         Color.lightGrey
     ]
     private let display = SKLabelNode(fontNamed: "PICO-8")
+    private var sprite: SKSpriteNode?
+    private var view: SKView?
     var blinkIndex = 0
     var text: String {
         get {
@@ -216,6 +227,9 @@ struct Text {
         }
         set {
             display.text = newValue
+            if let view = view {
+                pixelate(using: view)
+            }
         }
     }
     var color: NSColor
@@ -226,18 +240,35 @@ struct Text {
         node.position = coordinate.toPosition()
         node.zPosition = Layers.interface.rawValue
         display.text = text
-        drawText()
-    }
-
-    mutating func blink() {
-        blinkIndex = blinkIndex >= blinkColors.count - 1 ? 0 : blinkIndex + 1
-        display.fontColor = blinkColors[blinkIndex]
-    }
-
-    private func drawText() {
         display.fontSize = 6
         display.fontColor = self.color
         display.text = text
         node.addChild(display)
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
+    }
+
+    func pixelate(using view: SKView) {
+        self.view = view
+        sprite?.removeFromParent()
+        sprite = SKSpriteNode(texture: view.texture(from: display))
+        sprite!.texture?.filteringMode = .nearest
+        sprite!.position = display.position
+        display.removeFromParent()
+        node.addChild(sprite!)
+    }
+
+    func blink() {
+        blinkIndex = blinkIndex >= blinkColors.count - 1 ? 0 : blinkIndex + 1
+        display.fontColor = blinkColors[blinkIndex]
+        if let view = view {
+            pixelate(using: view)
+        }
     }
 }

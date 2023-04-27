@@ -1,8 +1,8 @@
 import SpriteKit
 
-struct Lives {
-    private(set) var coordinate: Coordinate = Coordinate(x: 2, y: 2)
-    private(set) var node: SKNode!
+struct Lives: Drawable {
+    private var coordinate: Coordinate = Coordinate(x: 2, y: 2)
+    private var node: SKNode!
     static let total = 4
     var lives = 4
 
@@ -10,6 +10,14 @@ struct Lives {
         node = SKNode()
         node.position = coordinate.toPosition()
         drawLives()
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
     }
 
     mutating func substractLife() {
@@ -37,28 +45,40 @@ struct Lives {
     }
 }
 
-struct Score {
+class Score: Drawable, Pixelatable {
     private var score = 0
-    private(set) var coordinate: Coordinate = Coordinate(x: 42, y: 9)
-    private(set) var node: SKNode!
-    private var display: SKLabelNode!
+    private var coordinate: Coordinate = Coordinate(x: 64, y: 6)
+    private var node: SKNode!
+    private let scoreDisplay: Text
 
     init() {
         node = SKNode()
-        node.position = coordinate.toPosition()
         node.zPosition = Layers.interface.rawValue
-        display = SKLabelNode(fontNamed: "PICO-8")
-        display.horizontalAlignmentMode = .left
-        display.fontSize = 6
-        display.fontColor = Color.lightBlue
-        node.addChild(display)
+        scoreDisplay = Text(
+            text: "score:\(score)",
+            color: Color.lightBlue,
+            coordinate: coordinate
+        )
+        scoreDisplay.add(parent: node)
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
+    }
+
+    func pixelate(using view: SKView) {
+        scoreDisplay.pixelate(using: view)
     }
 
     func update() {
-        display.text = "score:\(score)"
+        scoreDisplay.text = "score:\(score)"
     }
 
-    mutating func increment() {
+    func increment() {
         score += 1
     }
 }

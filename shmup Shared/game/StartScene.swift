@@ -14,7 +14,9 @@ class StartScene: SKScene {
     }
 
     func setUpScene() {
-        view?.preferredFramesPerSecond = Screen.framesPerSecond
+        guard let view = view else { return }
+
+        view.preferredFramesPerSecond = Screen.framesPerSecond
         let intro1 = Text(
             text: "spritekit port of",
             color: Color.lightBlue,
@@ -46,10 +48,14 @@ class StartScene: SKScene {
         sprite2.position = Coordinate(x: 64, y: 64).toPosition()
         let sprite3 = sheet.sprite(row: 5, col: 0, size: 2)
         sprite3.position = Coordinate(x: 56, y: 80).toPosition()
-        addChild(intro1.node)
-        addChild(intro2.node)
-        addChild(intro3.node)
-        addChild(pressKey.node)
+        intro1.add(parent: self)
+        intro1.pixelate(using: view)
+        intro2.add(parent: self)
+        intro2.pixelate(using: view)
+        intro3.add(parent: self)
+        intro3.pixelate(using: view)
+        pressKey.add(parent: self)
+        pressKey.pixelate(using: view)
         addChild(sprite1)
         addChild(sprite2)
         addChild(sprite3)

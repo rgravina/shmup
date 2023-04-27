@@ -1,11 +1,11 @@
 import SpriteKit
 
-class Star {
+class Star: Drawable {
     private static let slowStarSpeed: Double = 0.6
     private static let normalStarSpeed: Double = 1.8
     private static let fastStarSpeed: Double = 2.5
     static let starSpeeds = 0.2...fastStarSpeed
-    private(set) var node: SKSpriteNode!
+    private var node: SKSpriteNode!
     var speed: Double
 
     init(coordinate: Coordinate, speed: Double) {
@@ -23,14 +23,22 @@ class Star {
         node.zPosition = Layers.background.rawValue
     }
 
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
+    }
+
     func update() {
         node.position.y = node.position.y < 0 ? CGFloat(Screen.size) : node.position.y - speed
     }
 }
 
-struct StarField {
+struct StarField: Drawable {
     private static let totalStars = 100
-    private(set) var node: SKNode!
+    private var node: SKNode!
     private var stars = [Star]()
 
     init() {
@@ -41,8 +49,16 @@ struct StarField {
                 speed: Double.random(in: Star.starSpeeds)
             )
             stars.append(star)
-            node.addChild(star.node)
+            star.add(parent: node)
         }
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
     }
 
     func update() {

@@ -1,7 +1,7 @@
 import SpriteKit
 
-class WaveText {
-    private(set) var node: SKNode!
+class WaveText: Drawable, Pixelatable {
+    private var node: SKNode!
     private var text: Text!
     private static var maxAge = 80
     private var age = 0
@@ -15,7 +15,19 @@ class WaveText {
             color: Color.darkGrey,
             coordinate: Coordinate(x: 64, y: 32)
         )
-        node.addChild(text.node)
+        text.add(parent: node)
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
+    }
+
+    func pixelate(using view: SKView) {
+        text.pixelate(using: view)
     }
 
     func update() {
@@ -43,9 +55,9 @@ struct Animation {
     ])
 }
 
-class Enemy {
+class Enemy: Drawable {
     private(set) var coordinate: Coordinate
-    private(set) var node: SKSpriteNode!
+    private var node: SKSpriteNode!
     private var sprite: Double = 0
     private(set) var hitPoints: Int = 5
     private(set) var destroyed = false
@@ -55,6 +67,14 @@ class Enemy {
         node = SKSpriteNode(imageNamed: "enemy_\(Int(sprite))")
         Screen.setup(sprite: node)
         node.position = coordinate.toPosition()
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
     }
 
     func hit() {
@@ -80,8 +100,8 @@ class Enemy {
     }
 }
 
-class Enemies {
-    private(set) var node: SKNode!
+class Enemies: Drawable, Pixelatable {
+    private var node: SKNode!
     private var waveText: WaveText!
     private var enemies = [Enemy]()
     private(set) var wave = 0
@@ -90,13 +110,25 @@ class Enemies {
         node = SKNode()
         node.zPosition = Layers.sprites.rawValue
         waveText = WaveText(wave: wave)
-        node.addChild(waveText.node)
+        waveText.add(parent: node)
         nextWave()
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
+    }
+
+    func pixelate(using view: SKView) {
+        waveText.pixelate(using: view)
     }
 
     func collides(ball: PlasmaBall, onCollision: (Enemy, PlasmaBall) -> Void) {
         for (index, enemy) in enemies.enumerated().reversed() {
-            if Collision.collides(a: ball.node, b: enemy.node) {
+            if Collision.collides(a: ball, b: enemy) {
                 if enemy.hitPoints == 0 {
                     enemy.remove()
                     enemies.remove(at: index)
@@ -123,7 +155,7 @@ class Enemies {
                 break
             }
             if !player.isInvunerable {
-                if Collision.collides(a: player.node, b: enemy.node) {
+                if Collision.collides(a: player, b: enemy) {
                     onCollision()
                     break
                 }
@@ -144,6 +176,6 @@ class Enemies {
     private func createEnemy() {
         let enemy = Enemy(coordinate: Screen.randomStartingCoordinate())
         enemies.append(enemy)
-        node.addChild(enemy.node)
+        enemy.add(parent: node)
     }
 }

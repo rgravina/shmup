@@ -25,8 +25,8 @@ class GameOverScene: SKScene {
             color: Color.lightGrey,
             coordinate: Coordinate(x: 64, y: 96)
         )
-        addChild(intro.node)
-        addChild(pressKey.node)
+        intro.add(parent: self)
+        pressKey.add(parent: self)
     }
 
     override func didMove(to view: SKView) {

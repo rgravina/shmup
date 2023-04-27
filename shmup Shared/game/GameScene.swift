@@ -23,13 +23,15 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         view.preferredFramesPerSecond = Screen.framesPerSecond
         player = Player(soundPlayer: soundPlayer)
-        addChild(starField.node)
-        addChild(player.node)
-        addChild(plasmaBalls.node)
+        starField.add(parent: self)
+        player.add(parent: self)
+        plasmaBalls.add(parent: self)
         addChild(emitter.node)
-        addChild(enemies.node)
-        addChild(lives.node)
-        addChild(score.node)
+        enemies.add(parent: self)
+        enemies.pixelate(using: view)
+        lives.add(parent: self)
+        score.add(parent: self)
+        score.pixelate(using: view)
     }
 
     private func onPlayerEmemyCollision() {

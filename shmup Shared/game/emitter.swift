@@ -148,7 +148,7 @@ class Boom: Particle {
     var ySpeed: Double
     private let maxAge: Int
     private var age: Int
-    private(set) var size: Double
+    private var size: Double
 
     init(coordinate: Coordinate, color: BoomColor, xSpeed: Double, ySpeed: Double, age: Int, size: Double, maxAge: Int) {
         self.emitterColor = color

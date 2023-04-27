@@ -9,7 +9,7 @@ struct Box {
 }
 
 struct Collision {
-    static func collides(a: SKNode, b: SKNode) -> Bool {
+    static func collides(a: Drawable, b: Drawable) -> Bool {
         let aBox = Collision.box(a.position)
         let bBox = Collision.box(b.position)
         return !(aBox.right < bBox.left ||
