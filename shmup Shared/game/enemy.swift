@@ -55,18 +55,13 @@ struct Animation {
     ])
 }
 
-class Enemy: Drawable {
-    private(set) var coordinate: Coordinate
-    private var node: SKSpriteNode!
+class EnemySpriteAnimation: Drawable {
     private var sprite: Double = 0
-    private(set) var hitPoints: Int = 5
-    private(set) var destroyed = false
+    private var node: SKSpriteNode!
 
-    init(coordinate: Coordinate) {
-        self.coordinate = coordinate
+    init() {
         node = SKSpriteNode(imageNamed: "enemy_\(Int(sprite))")
         Screen.setup(sprite: node)
-        node.position = coordinate.toPosition()
     }
 
     func add(parent: SKNode) {
@@ -77,22 +72,60 @@ class Enemy: Drawable {
         return node.position
     }
 
-    func hit() {
-        hitPoints -= 1
+    func start(coordinate: Coordinate) -> SKSpriteNode {
+        node.position = coordinate.toPosition()
+        return node
+    }
+
+    func flash() {
         node.run(Animation.flash)
     }
 
-    func move() {
+    func next(coordinate: Coordinate) {
         sprite = sprite >= 3.8 ? 0 : sprite + 0.4
         node.texture = SKTexture(imageNamed: "enemy_\(Int(sprite))")
         node.texture?.filteringMode = .nearest
-        coordinate = coordinate.move(direction: .down, pixels: 1)
         node.position = coordinate.toPosition()
     }
 
     func remove() {
-        destroyed = true
         node.removeFromParent()
+    }
+}
+
+class Enemy: Drawable {
+    private(set) var coordinate: Coordinate
+    private var animation = EnemySpriteAnimation()
+    private(set) var hitPoints: Int = 5
+    private(set) var destroyed = false
+
+    init(coordinate: Coordinate) {
+        self.coordinate = coordinate
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(animation.start(
+            coordinate: coordinate
+        ))
+    }
+
+    var position: CGPoint {
+        return animation.position
+    }
+
+    func hit() {
+        hitPoints -= 1
+        animation.flash()
+    }
+
+    func move() {
+        coordinate = coordinate.move(direction: .down, pixels: 1)
+        animation.next(coordinate: coordinate)
+    }
+
+    func remove() {
+        destroyed = true
+        animation.remove()
     }
 
     func moveToTop() {
