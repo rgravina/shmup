@@ -148,7 +148,7 @@ class EnemySpriteSheetAnimation: Drawable, SpriteAnimation {
             0 :
             sprite + (frames/EnemySpriteSheetAnimation.frameLength)
         node.texture = EnemySpriteSheetAnimation.sheet.texture(row: row, col: col + Int(sprite) * size, size: size)
-        node.texture?.filteringMode = .nearest
+        Screen.setup(sprite: node)
         node.position = coordinate.toPosition()
     }
 
