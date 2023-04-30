@@ -34,6 +34,10 @@ class Star: Drawable {
     func update() {
         node.position.y = node.position.y < 0 ? CGFloat(Screen.size) : node.position.y - speed
     }
+
+    func remove() {
+        node.removeFromParent()
+    }
 }
 
 struct StarField: Drawable {
@@ -63,5 +67,9 @@ struct StarField: Drawable {
 
     func update() {
         stars.forEach { $0.update() }
+    }
+
+    func remove() {
+        node.removeFromParent()
     }
 }

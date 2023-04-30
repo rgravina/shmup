@@ -63,6 +63,10 @@ class Player: Drawable {
         animateFlash()
     }
 
+    func remove() {
+        node.removeFromParent()
+    }
+
     private func fire() {
         if firing {
             if shouldFire {
@@ -217,5 +221,9 @@ class PlasmaBalls: Drawable {
                 onCollision(enemy, ball)
             }
         }
+    }
+
+    func remove() {
+        node.removeFromParent()
     }
 }

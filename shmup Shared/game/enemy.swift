@@ -45,6 +45,10 @@ class WaveText: Drawable, Pixelatable {
         age = 0
         node.isHidden = false
     }
+
+    func remove() {
+        node.removeFromParent()
+    }
 }
 
 struct Animation {
@@ -55,7 +59,13 @@ struct Animation {
     ])
 }
 
-class EnemySpriteAnimation: Drawable {
+protocol SpriteAnimation: Drawable {
+    func start(coordinate: Coordinate) -> SKSpriteNode
+    func flash()
+    func next(coordinate: Coordinate)
+}
+
+class EnemySpriteAnimation: Drawable, SpriteAnimation {
     private var sprite: Double = 0
     private var node: SKSpriteNode!
 
@@ -95,12 +105,13 @@ class EnemySpriteAnimation: Drawable {
 
 class Enemy: Drawable {
     private(set) var coordinate: Coordinate
-    private var animation = EnemySpriteAnimation()
+    private var animation: SpriteAnimation
     private(set) var hitPoints: Int = 5
     private(set) var destroyed = false
 
-    init(coordinate: Coordinate) {
+    init(coordinate: Coordinate, animation: SpriteAnimation) {
         self.coordinate = coordinate
+        self.animation = animation
     }
 
     func add(parent: SKNode) {
@@ -206,8 +217,15 @@ class Enemies: Drawable, Pixelatable {
         createEnemy()
     }
 
+    func remove() {
+        node.removeFromParent()
+    }
+
     private func createEnemy() {
-        let enemy = Enemy(coordinate: Screen.randomStartingCoordinate())
+        let enemy = Enemy(
+            coordinate: Screen.randomStartingCoordinate(),
+            animation: EnemySpriteAnimation()
+        )
         enemies.append(enemy)
         enemy.add(parent: node)
     }

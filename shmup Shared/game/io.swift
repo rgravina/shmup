@@ -122,6 +122,7 @@ struct Sprite {
 protocol Drawable {
     func add(parent: SKNode)
     var position: CGPoint { get }
+    func remove()
 }
 
 protocol Pixelatable {
@@ -252,6 +253,10 @@ class Text: Drawable, Pixelatable {
 
     var position: CGPoint {
         return node.position
+    }
+
+    func remove() {
+        node.removeFromParent()
     }
 
     func pixelate(using view: SKView) {

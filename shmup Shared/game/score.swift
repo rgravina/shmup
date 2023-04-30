@@ -26,6 +26,10 @@ struct Lives: Drawable {
         drawLives()
     }
 
+    func remove() {
+        node.removeFromParent()
+    }
+
     private func drawLives() {
         for index in 0..<Lives.total {
             let lifeAvailable = SKSpriteNode(imageNamed: "life_0")
@@ -76,6 +80,10 @@ class Score: Drawable, Pixelatable {
 
     func update() {
         scoreDisplay.text = "score:\(score)"
+    }
+
+    func remove() {
+        node.removeFromParent()
     }
 
     func increment() {
