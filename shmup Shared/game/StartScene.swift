@@ -37,17 +37,6 @@ class StartScene: SKScene {
             color: Color.lightGrey,
             coordinate: Coordinate(x: 64, y: 96)
         )
-        let sheet = SpriteSheet(
-            imageNamed: "enemysprites",
-            rows: 7,
-            cols: 16
-        )
-        let sprite1 = sheet.sprite(row: 3, col: 8)
-        sprite1.position = Coordinate(x: 56, y: 64).toPosition()
-        let sprite2 = sheet.sprite(row: 1, col: 4)
-        sprite2.position = Coordinate(x: 64, y: 64).toPosition()
-        let sprite3 = sheet.sprite(row: 5, col: 0, size: 2)
-        sprite3.position = Coordinate(x: 56, y: 80).toPosition()
         intro1.add(parent: self)
         intro1.pixelate(using: view)
         intro2.add(parent: self)
@@ -56,9 +45,6 @@ class StartScene: SKScene {
         intro3.pixelate(using: view)
         pressKey.add(parent: self)
         pressKey.pixelate(using: view)
-        addChild(sprite1)
-        addChild(sprite2)
-        addChild(sprite3)
     }
 
     override func didMove(to view: SKView) {
