@@ -148,7 +148,13 @@ class SpriteSheet {
     }
 
     func sprite(row: Int, col: Int, size: Int = 1) -> SKSpriteNode {
-        let spriteTexture = SKTexture(
+        let sprite = SKSpriteNode(texture: texture(row: row, col: col, size: size))
+        sprite.anchorPoint = .init(x: 0, y: 0)
+        return sprite
+    }
+
+    func texture(row: Int, col: Int, size: Int = 1) -> SKTexture {
+        return SKTexture(
             rect: CGRect(
                 x: spriteWidth * CGFloat(col),
                 y: spriteHeight * CGFloat(rows - row - 1 * size),
@@ -157,9 +163,6 @@ class SpriteSheet {
             ),
             in: texture
         )
-        let sprite = SKSpriteNode(texture: spriteTexture)
-        sprite.anchorPoint = .init(x: 0, y: 0)
-        return sprite
     }
 }
 

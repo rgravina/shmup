@@ -103,6 +103,60 @@ class EnemySpriteAnimation: Drawable, SpriteAnimation {
     }
 }
 
+class EnemySpriteSheetAnimation: Drawable, SpriteAnimation {
+    private var row: Int
+    private var col: Int
+    private var size: Int
+    private var frames: Double
+    private var sprite: Double = 0
+    static let frameLength: Double = 10
+    private var node: SKSpriteNode!
+    static let sheet = SpriteSheet(
+        imageNamed: "enemysprites",
+        rows: 7,
+        cols: 16
+    )
+
+    init(row: Int, col: Int, frames: Int, size: Int = 1) {
+        self.row = row
+        self.col = col
+        self.frames = Double(frames)
+        self.size = size
+        node = EnemySpriteSheetAnimation.sheet.sprite(row: row, col: col, size: size)
+        Screen.setup(sprite: node)
+    }
+
+    func add(parent: SKNode) {
+        parent.addChild(node)
+    }
+
+    var position: CGPoint {
+        return node.position
+    }
+
+    func start(coordinate: Coordinate) -> SKSpriteNode {
+        node.position = coordinate.toPosition()
+        return node
+    }
+
+    func flash() {
+        node.run(Animation.flash)
+    }
+
+    func next(coordinate: Coordinate) {
+        sprite = sprite >= frames ?
+            0 :
+            sprite + (frames/EnemySpriteSheetAnimation.frameLength)
+        node.texture = EnemySpriteSheetAnimation.sheet.texture(row: row, col: col + Int(sprite) * size, size: size)
+        node.texture?.filteringMode = .nearest
+        node.position = coordinate.toPosition()
+    }
+
+    func remove() {
+        node.removeFromParent()
+    }
+}
+
 class Enemy: Drawable {
     private(set) var coordinate: Coordinate
     private var animation: SpriteAnimation
@@ -222,9 +276,20 @@ class Enemies: Drawable, Pixelatable {
     }
 
     private func createEnemy() {
+        let animation: SpriteAnimation
+        switch wave {
+        case 4:
+            animation = EnemySpriteSheetAnimation(row: 5, col: 0, frames: 2, size: 2)
+        case 3:
+            animation = EnemySpriteSheetAnimation(row: 3, col: 8, frames: 4)
+        case 2:
+            animation = EnemySpriteSheetAnimation(row: 1, col: 4, frames: 2)
+        default:
+            animation = EnemySpriteAnimation()
+        }
         let enemy = Enemy(
             coordinate: Screen.randomStartingCoordinate(),
-            animation: EnemySpriteAnimation()
+            animation: animation
         )
         enemies.append(enemy)
         enemy.add(parent: node)
