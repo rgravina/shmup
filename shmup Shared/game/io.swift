@@ -121,7 +121,6 @@ struct Sprite {
 
 protocol Drawable {
     func add(parent: SKNode)
-    var position: CGPoint { get }
     func remove()
 }
 
@@ -147,19 +146,19 @@ class SpriteSheet {
         spriteHeight = height/CGFloat(rows)
     }
 
-    func sprite(row: Int, col: Int, size: Int = 1) -> SKSpriteNode {
-        let sprite = SKSpriteNode(texture: texture(row: row, col: col, size: size))
+    func sprite(row: Int, col: Int, cells: Int = 1) -> SKSpriteNode {
+        let sprite = SKSpriteNode(texture: texture(row: row, col: col, cells: cells))
         sprite.anchorPoint = .init(x: 0, y: 0)
         return sprite
     }
 
-    func texture(row: Int, col: Int, size: Int = 1) -> SKTexture {
+    func texture(row: Int, col: Int, cells: Int = 1) -> SKTexture {
         return SKTexture(
             rect: CGRect(
                 x: spriteWidth * CGFloat(col),
-                y: spriteHeight * CGFloat(rows - row - 1 * size),
-                width: spriteWidth * CGFloat(size),
-                height: spriteHeight * CGFloat(size)
+                y: spriteHeight * CGFloat(rows - row - 1 * cells),
+                width: spriteWidth * CGFloat(cells),
+                height: spriteHeight * CGFloat(cells)
             ),
             in: texture
         )
@@ -252,10 +251,6 @@ class Text: Drawable, Pixelatable {
 
     func add(parent: SKNode) {
         parent.addChild(node)
-    }
-
-    var position: CGPoint {
-        return node.position
     }
 
     func remove() {

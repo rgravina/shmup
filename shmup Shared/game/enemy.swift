@@ -22,10 +22,6 @@ class WaveText: Drawable, Pixelatable {
         parent.addChild(node)
     }
 
-    var position: CGPoint {
-        return node.position
-    }
-
     func pixelate(using view: SKView) {
         text.pixelate(using: view)
     }
@@ -63,6 +59,8 @@ protocol SpriteAnimation: Drawable {
     func start(coordinate: Coordinate) -> SKSpriteNode
     func flash()
     func next(coordinate: Coordinate)
+    var position: CGPoint { get }
+    var collisionBoxWidth: Int { get }
 }
 
 class EnemySpriteAnimation: Drawable, SpriteAnimation {
@@ -72,6 +70,10 @@ class EnemySpriteAnimation: Drawable, SpriteAnimation {
     init() {
         node = SKSpriteNode(imageNamed: "enemy_\(Int(sprite))")
         Screen.setup(sprite: node)
+    }
+
+    var collisionBoxWidth: Int {
+        return Sprite.size
     }
 
     func add(parent: SKNode) {
@@ -106,7 +108,7 @@ class EnemySpriteAnimation: Drawable, SpriteAnimation {
 class EnemySpriteSheetAnimation: Drawable, SpriteAnimation {
     private var row: Int
     private var col: Int
-    private var size: Int
+    private let cells: Int
     private var frames: Double
     private var sprite: Double = 0
     static let frameLength: Double = 10
@@ -117,13 +119,17 @@ class EnemySpriteSheetAnimation: Drawable, SpriteAnimation {
         cols: 16
     )
 
-    init(row: Int, col: Int, frames: Int, size: Int = 1) {
+    init(row: Int, col: Int, frames: Int, cells: Int = 1) {
         self.row = row
         self.col = col
         self.frames = Double(frames)
-        self.size = size
-        node = EnemySpriteSheetAnimation.sheet.sprite(row: row, col: col, size: size)
+        self.cells = cells
+        node = EnemySpriteSheetAnimation.sheet.sprite(row: row, col: col, cells: cells)
         Screen.setup(sprite: node)
+    }
+
+    var collisionBoxWidth: Int {
+        return cells * Sprite.size
     }
 
     func add(parent: SKNode) {
@@ -147,7 +153,7 @@ class EnemySpriteSheetAnimation: Drawable, SpriteAnimation {
         sprite = sprite >= frames ?
             0 :
             sprite + (frames/EnemySpriteSheetAnimation.frameLength)
-        node.texture = EnemySpriteSheetAnimation.sheet.texture(row: row, col: col + Int(sprite) * size, size: size)
+        node.texture = EnemySpriteSheetAnimation.sheet.texture(row: row, col: col + Int(sprite) * cells, cells: cells)
         Screen.setup(sprite: node)
         node.position = coordinate.toPosition()
     }
@@ -157,7 +163,8 @@ class EnemySpriteSheetAnimation: Drawable, SpriteAnimation {
     }
 }
 
-class Enemy: Drawable {
+class Enemy: Drawable, Collidable {
+    let collisionBoxWidth: Int
     private(set) var coordinate: Coordinate
     private var animation: SpriteAnimation
     private(set) var hitPoints: Int = 5
@@ -166,6 +173,7 @@ class Enemy: Drawable {
     init(coordinate: Coordinate, animation: SpriteAnimation) {
         self.coordinate = coordinate
         self.animation = animation
+        self.collisionBoxWidth = animation.collisionBoxWidth
     }
 
     func add(parent: SKNode) {
@@ -214,10 +222,6 @@ class Enemies: Drawable, Pixelatable {
 
     func add(parent: SKNode) {
         parent.addChild(node)
-    }
-
-    var position: CGPoint {
-        return node.position
     }
 
     func pixelate(using view: SKView) {
@@ -279,7 +283,7 @@ class Enemies: Drawable, Pixelatable {
         let animation: SpriteAnimation
         switch wave {
         case 4:
-            animation = EnemySpriteSheetAnimation(row: 5, col: 0, frames: 2, size: 2)
+            animation = EnemySpriteSheetAnimation(row: 5, col: 0, frames: 2, cells: 2)
         case 3:
             animation = EnemySpriteSheetAnimation(row: 3, col: 8, frames: 4)
         case 2:

@@ -27,10 +27,6 @@ class Star: Drawable {
         parent.addChild(node)
     }
 
-    var position: CGPoint {
-        return node.position
-    }
-
     func update() {
         node.position.y = node.position.y < 0 ? CGFloat(Screen.size) : node.position.y - speed
     }
@@ -59,10 +55,6 @@ struct StarField: Drawable {
 
     func add(parent: SKNode) {
         parent.addChild(node)
-    }
-
-    var position: CGPoint {
-        return node.position
     }
 
     func update() {

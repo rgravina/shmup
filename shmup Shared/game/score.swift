@@ -16,10 +16,6 @@ struct Lives: Drawable {
         parent.addChild(node)
     }
 
-    var position: CGPoint {
-        return node.position
-    }
-
     mutating func substractLife() {
         lives -= 1
         node.removeAllChildren()
@@ -68,10 +64,6 @@ class Score: Drawable, Pixelatable {
 
     func add(parent: SKNode) {
         parent.addChild(node)
-    }
-
-    var position: CGPoint {
-        return node.position
     }
 
     func pixelate(using view: SKView) {

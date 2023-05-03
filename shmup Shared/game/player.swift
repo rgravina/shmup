@@ -1,7 +1,7 @@
 import SpriteKit
 import Foundation
 
-class Player: Drawable {
+class Player: Drawable, Collidable {
     private(set) var coordinate: Coordinate = Coordinate(x: Screen.size/2, y: Screen.size/2)
     private(set) var direction: Direction = .none
     private var node: SKNode!
@@ -14,6 +14,7 @@ class Player: Drawable {
     private var invulnerability: Int = 0
     private var firing = false
     private var firingTimer: Int = 0
+    let collisionBoxWidth = 8
 
     init(soundPlayer: SoundPlayer) {
         self.soundPlayer = soundPlayer
@@ -144,10 +145,11 @@ class Player: Drawable {
     }
 }
 
-class PlasmaBall: Drawable {
+class PlasmaBall: Drawable, Collidable {
     private(set) var coordinate: Coordinate
     private var node: SKNode!
     private var ball: SKSpriteNode!
+    let collisionBoxWidth = 8
 
     init(coordinate: Coordinate) {
         self.coordinate = coordinate
@@ -196,10 +198,6 @@ class PlasmaBalls: Drawable {
 
     func add(parent: SKNode) {
         parent.addChild(node)
-    }
-
-    var position: CGPoint {
-        return node.position
     }
 
     func update(player: Player, enemies: Enemies, onCollision: (Enemy, PlasmaBall) -> Void) {
