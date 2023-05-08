@@ -163,16 +163,21 @@ class EnemySpriteSheetAnimation: Drawable, SpriteAnimation {
     }
 }
 
+enum EnemyType {
+    case none, greenAlien, redAlien, spinningShip, largeShip
+}
+
 class Enemy: Drawable, Collidable {
     let collisionBoxWidth: Int
     private(set) var coordinate: Coordinate
     private var animation: SpriteAnimation
-    private(set) var hitPoints: Int = 5
+    private(set) var hitPoints: Int
     private(set) var destroyed = false
 
-    init(coordinate: Coordinate, animation: SpriteAnimation) {
+    init(coordinate: Coordinate, animation: SpriteAnimation, hitPoints: Int) {
         self.coordinate = coordinate
         self.animation = animation
+        self.hitPoints = hitPoints
         self.collisionBoxWidth = animation.collisionBoxWidth
     }
 
@@ -202,7 +207,7 @@ class Enemy: Drawable, Collidable {
     }
 
     func moveToTop() {
-        coordinate = Screen.randomStartingCoordinate()
+        coordinate = Coordinate(x: coordinate.x, y: -Sprite.size)
     }
 }
 
@@ -210,14 +215,14 @@ class Enemies: Drawable, Pixelatable {
     private var node: SKNode!
     private var waveText: WaveText!
     private var enemies = [Enemy]()
-    private(set) var wave = 0
+    private(set) var wave = 1
 
     init() {
         node = SKNode()
         node.zPosition = Layers.sprites.rawValue
         waveText = WaveText(wave: wave)
         waveText.add(parent: node)
-        nextWave()
+        drawWave(enemies: ememiesForWave())
     }
 
     func add(parent: SKNode) {
@@ -231,14 +236,12 @@ class Enemies: Drawable, Pixelatable {
     func collides(ball: PlasmaBall, onCollision: (Enemy, PlasmaBall) -> Void) {
         for (index, enemy) in enemies.enumerated().reversed() {
             if Collision.collides(a: ball, b: enemy) {
+                enemy.hit()
                 if enemy.hitPoints == 0 {
                     enemy.remove()
                     enemies.remove(at: index)
-                    onCollision(enemy, ball)
-                } else {
-                    enemy.hit()
-                    onCollision(enemy, ball)
                 }
+                onCollision(enemy, ball)
                 break
             }
         }
@@ -247,7 +250,8 @@ class Enemies: Drawable, Pixelatable {
     func update(player: Player, onCollision: () -> Void, onNewWave: () -> Void) {
         waveText.update()
         if enemies.isEmpty {
-            nextWave()
+            wave += 1
+            drawWave(enemies: ememiesForWave())
             onNewWave()
         }
         for (_, enemy) in enemies.enumerated().reversed() {
@@ -265,37 +269,97 @@ class Enemies: Drawable, Pixelatable {
         }
     }
 
-    func createWave() {
-        createEnemy()
-    }
-
-    func nextWave() {
-        wave += 1
+    func drawWave(enemies: [[EnemyType]]) {
         waveText.nextWave(wave: wave)
-        createEnemy()
+        for (row, rows) in enemies.enumerated() {
+            for (col, enemyType) in rows.enumerated() {
+                guard enemyType != .none else { continue }
+                createEnemy(
+                    coordinate: Coordinate(
+                        x: (col * Sprite.size + col * 4) + 6,
+                        y: (row * Sprite.size + row * 4) + 12
+                    ),
+                    enemyType: enemyType,
+                    hitPoints: hitPointsForEnemyType(enemyType: enemyType)
+                )
+            }
+        }
     }
 
     func remove() {
         node.removeFromParent()
     }
 
-    private func createEnemy() {
-        let animation: SpriteAnimation
-        switch wave {
-        case 4:
-            animation = EnemySpriteSheetAnimation(row: 5, col: 0, frames: 2, cells: 2)
-        case 3:
-            animation = EnemySpriteSheetAnimation(row: 3, col: 8, frames: 4)
-        case 2:
-            animation = EnemySpriteSheetAnimation(row: 1, col: 4, frames: 2)
-        default:
-            animation = EnemySpriteAnimation()
-        }
+    private func createEnemy(coordinate: Coordinate, enemyType: EnemyType, hitPoints: Int) {
         let enemy = Enemy(
-            coordinate: Screen.randomStartingCoordinate(),
-            animation: animation
+            coordinate: coordinate,
+            animation: ememyForType(enemyType: enemyType),
+            hitPoints: hitPointsForEnemyType(enemyType: enemyType)
         )
         enemies.append(enemy)
         enemy.add(parent: node)
+    }
+
+    private func hitPointsForEnemyType(enemyType: EnemyType) -> Int {
+        switch enemyType {
+        case .largeShip:
+            return 5
+        case .spinningShip:
+            return 3
+        case .redAlien:
+            return 2
+        case .greenAlien:
+            return 1
+        default:
+            return 1
+        }
+    }
+
+    private func ememyForType(enemyType: EnemyType) -> SpriteAnimation {
+        switch enemyType {
+        case .largeShip:
+            return EnemySpriteSheetAnimation(row: 5, col: 0, frames: 2, cells: 2)
+        case .spinningShip:
+            return EnemySpriteSheetAnimation(row: 3, col: 8, frames: 4)
+        case .redAlien:
+            return EnemySpriteSheetAnimation(row: 1, col: 4, frames: 2)
+        case .greenAlien:
+            return EnemySpriteAnimation()
+        default:
+            return EnemySpriteAnimation()
+        }
+    }
+
+    private func ememiesForWave() -> [[EnemyType]] {
+        switch wave {
+        case 4:
+            return [
+                [.none, .none, .spinningShip, .largeShip, .none, .spinningShip, .none, .none],
+                [.none, .none, .spinningShip, .largeShip, .none, .spinningShip, .none, .none],
+                [.none, .none, .spinningShip, .largeShip, .none, .spinningShip, .none, .none],
+                [.none, .none, .spinningShip, .largeShip, .none, .spinningShip, .none, .none],
+            ]
+        case 3:
+            return [
+                [.greenAlien, .greenAlien, .redAlien, .redAlien, .redAlien, .greenAlien, .redAlien, .spinningShip, .greenAlien, .greenAlien],
+                [.spinningShip, .greenAlien, .spinningShip, .greenAlien, .spinningShip, .redAlien, .redAlien, .redAlien, .greenAlien, .redAlien],
+                [.spinningShip, .greenAlien, .spinningShip, .redAlien, .spinningShip, .spinningShip, .redAlien, .redAlien, .greenAlien, .spinningShip],
+                [.redAlien, .greenAlien, .redAlien, .redAlien, .redAlien, .spinningShip, .redAlien, .redAlien, .greenAlien, .redAlien],
+           ]
+        case 2:
+            return [
+                [.greenAlien, .greenAlien, .redAlien, .redAlien, .redAlien, .greenAlien, .redAlien, .redAlien, .greenAlien, .greenAlien],
+                [.greenAlien, .greenAlien, .redAlien, .greenAlien, .spinningShip, .redAlien, .redAlien, .redAlien, .greenAlien, .redAlien],
+                [.spinningShip, .greenAlien, .redAlien, .redAlien, .spinningShip, .spinningShip, .redAlien, .redAlien, .greenAlien, .spinningShip],
+                [.redAlien, .greenAlien, .redAlien, .redAlien, .redAlien, .spinningShip, .redAlien, .redAlien, .greenAlien, .redAlien],
+           ]
+        default:
+            return [
+                [.none, .greenAlien, .redAlien, .redAlien, .spinningShip, .redAlien, .redAlien, .redAlien, .greenAlien, .none],
+                [.none, .greenAlien, .redAlien, .redAlien, .redAlien, .spinningShip, .redAlien, .redAlien, .greenAlien, .none],
+                [.none, .greenAlien, .greenAlien, .redAlien, .greenAlien, .spinningShip, .redAlien, .redAlien, .greenAlien, .none],
+                [.none, .greenAlien, .redAlien, .greenAlien, .spinningShip, .greenAlien, .redAlien, .redAlien, .greenAlien, .none],
+           ]
+        }
     }
 }
